@@ -12,18 +12,17 @@ public class CorsConfig {
 
     //When you know the domain name for your client, add it below before deployment
     private static final String[] ALLOWED_ORIGINS = new String[] {
-            "*",
             "https://skillsync.lauraramgil.dk",
+            "skillsync-backend-gtgrd5emg5fagudj.northeurope-01.azurewebsites.net",
             "http://127.0.0.1:5500"
     };
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList(ALLOWED_ORIGINS));  // Use setAllowedOrigins here
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        //Use the line below instead, if you want to allow specific headers only
-        //configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With"));
-        configuration.setAllowedOriginPatterns(Arrays.asList(ALLOWED_ORIGINS));
+        configuration.setAllowedHeaders(Arrays.asList("*"));  // Allow all headers
+        configuration.setAllowCredentials(true);  // Allow credentials if necessary (e.g., cookies)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
