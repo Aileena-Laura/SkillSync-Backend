@@ -13,11 +13,11 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <!--Often a reversed company domain name, here you could use something like below -->
-    <groupId>kea.sem3.rename_me</groupId>
+    <groupId>SkillSync.application</groupId>
     <!-- The artifactId is the base package name used in the project -->
-    <artifactId>dat3.renameme</artifactId>
+    <artifactId>application</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Any name you like, that makes sense for the project</name>
+    <name>SkillSync</name>
     <description>
         Add a description for your project there
     </description>
