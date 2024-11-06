@@ -80,6 +80,6 @@ public class AuthenticationTest {
     mockMvc.perform(post("/api/auth/login")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(loginRequest)))
-            .andExpect(status().isOk());
+            .andExpect(status().isUnauthorized());
   }
 }
