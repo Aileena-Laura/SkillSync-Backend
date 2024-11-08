@@ -30,7 +30,7 @@ jobs:
         with:
           name: java-app
           path: '${{ github.workspace }}/target/*.jar'
-          retention-days: 1
+          retension-days: 1
 
   deploy:
     runs-on: ubuntu-latest
@@ -50,9 +50,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_02C1E45081584E12911DE246F7D33F2C }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_95AD7E94DAE44706A319729D1A839195 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_EF38A6B70E67414F9BEC6E5DCF8F204E }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B824310BC8724FB5A5322CCD922BF74D }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3DCDF8F6F4AD47968BDBE323C7B24480 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DCBA532A253447F998708081619DCDB5 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
