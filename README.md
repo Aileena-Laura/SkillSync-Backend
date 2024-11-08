@@ -1,3 +1,5 @@
+# Status Badge
+[![Build and deploy JAR app to Azure Web App - SkillSync-Backend](https://github.com/Aileena-Laura/SkillSync-Backend/actions/workflows/main_skillsync-backend.yml/badge.svg)](https://github.com/Aileena-Laura/SkillSync-Backend/actions/workflows/main_skillsync-backend.yml)
 # startcode-with-security
 
 [Supplementing Google Doc](https://docs.google.com/document/d/1k5T7rRSrGetjuMdYoErk4ToZTk22QyBpR-x17nmtRos/edit?usp=sharing)
