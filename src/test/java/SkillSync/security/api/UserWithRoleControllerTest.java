@@ -76,7 +76,7 @@ class UserWithRoleControllerTest {
 
   @Test
   void addUsersWithRolesNoRoles() throws Exception {
-    UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk");
+    UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk", null);
     UserWithRoleController.DEFAULT_ROLE_TO_ASSIGN = null;
     mockMvc.perform(post("/api/user-with-role")
                     .contentType("application/json")
@@ -89,7 +89,7 @@ class UserWithRoleControllerTest {
 
   @Test
   void addUsersWithRoles() throws Exception {
-    UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk");
+    UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk", "STUDENT");
     //UserWithRoleController.DEFAULT_ROLE_TO_ASSIGN = null;
     mockMvc.perform(post("/api/user-with-role")
                     .contentType("application/json")
@@ -98,7 +98,7 @@ class UserWithRoleControllerTest {
             .andExpect(jsonPath("$.userName").value("u100"))
             .andExpect(jsonPath("$.email").value("u100@a.dk"))
             .andExpect(jsonPath("$.roleNames", hasSize(1)))
-            .andExpect(jsonPath("$.roleNames", contains("USER")));
+            .andExpect(jsonPath("$.roleNames", contains("STUDENT")));
   }
 
   @Test

@@ -47,14 +47,14 @@ class UserWithRolesServiceTest {
 
   @Test
   void addRole() {
-    UserWithRolesResponse user = userWithRolesService.addRole("u4", Role.USER);
+    UserWithRolesResponse user = userWithRolesService.addRole("u4", Role.STUDENT);
     assertEquals(1, user.getRoleNames().size());
     assertTrue(user.getRoleNames().contains("USER"));
   }
 
   @Test
   void removeRole() {
-    UserWithRolesResponse user = userWithRolesService.removeRole("u1", Role.USER);
+    UserWithRolesResponse user = userWithRolesService.removeRole("u1", Role.STUDENT);
     assertEquals(1, user.getRoleNames().size());
     assertTrue(user.getRoleNames().contains("ADMIN"));
     user = userWithRolesService.removeRole("u1", Role.ADMIN);
@@ -85,7 +85,7 @@ class UserWithRolesServiceTest {
   @Test
   void addUserWithRolesWithRole() {
     UserWithRolesRequest user = new UserWithRolesRequest("u5", "new_Password", "xx@x.dk");
-    UserWithRolesResponse newUser = userWithRolesService.addUserWithRoles(user, Role.USER);
+    UserWithRolesResponse newUser = userWithRolesService.addUserWithRoles(user, Role.STUDENT);
     assertEquals(1, newUser.getRoleNames().size());
     assertTrue(newUser.getRoleNames().contains("USER"));
     assertEquals("u5", newUser.getUserName());

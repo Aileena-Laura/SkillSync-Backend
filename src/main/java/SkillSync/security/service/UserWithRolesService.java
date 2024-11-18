@@ -12,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class UserWithRolesService {
 
-  private  final UserWithRolesRepository userWithRolesRepository;
+  private final UserWithRolesRepository userWithRolesRepository;
 
   public UserWithRolesService(UserWithRolesRepository userWithRolesRepository) {
     this.userWithRolesRepository = userWithRolesRepository;
@@ -59,11 +59,12 @@ public class UserWithRolesService {
     if(userWithRolesRepository.existsByEmail(body.getEmail())){
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"This email is used by another user");
     }
+    if(role == null){
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Please specify whether you are a student or a company");
+    }
     String pw = body.getPassword();
     UserWithRoles userWithRoles = new UserWithRoles(body.getUsername(), pw, body.getEmail());
-    if(role !=null  ) {
-      userWithRoles.addRole(role);
-    }
+    userWithRoles.addRole(role);
     return new UserWithRolesResponse(userWithRolesRepository.save(userWithRoles));
   }
 

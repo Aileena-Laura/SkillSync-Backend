@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserWithRoleController {
 
   //Take care with this. If no role is required for new users, add null as the value below
-  static Role DEFAULT_ROLE_TO_ASSIGN = Role.USER;
+  static Role DEFAULT_ROLE_TO_ASSIGN = Role.STUDENT;
 
   UserWithRolesService userWithRolesService;
 
@@ -23,7 +23,7 @@ public class UserWithRoleController {
   //Anonymous users can call this. Set DEFAULT_ROLE_TO_ASSIGN to null if no role should be added
   @PostMapping
   public UserWithRolesResponse addUserWithRoles(@RequestBody UserWithRolesRequest request) {
-    return userWithRolesService.addUserWithRoles (request, DEFAULT_ROLE_TO_ASSIGN);
+    return userWithRolesService.addUserWithRoles (request, Role.fromString(request.getRole()));
   }
 
   //Take care with this. This should NOT be something everyone can call
