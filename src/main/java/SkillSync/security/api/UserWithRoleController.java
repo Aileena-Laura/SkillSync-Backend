@@ -1,9 +1,12 @@
 package SkillSync.security.api;
 
+import SkillSync.security.dto.CompanyRequest;
+import SkillSync.security.dto.StudentRequest;
 import SkillSync.security.dto.UserWithRolesRequest;
 import SkillSync.security.dto.UserWithRolesResponse;
 import SkillSync.security.entity.Role;
 import SkillSync.security.service.UserWithRolesService;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +24,14 @@ public class UserWithRoleController {
   }
 
   //Anonymous users can call this. Set DEFAULT_ROLE_TO_ASSIGN to null if no role should be added
-  @PostMapping
-  public UserWithRolesResponse addUserWithRoles(@RequestBody UserWithRolesRequest request) {
-    return userWithRolesService.addUserWithRoles (request, Role.fromString(request.getRole()));
+  @PostMapping("/student")
+  public UserWithRolesResponse addStudentProfile(@Valid @RequestBody StudentRequest request) {
+    return userWithRolesService.addStudentUser(request, Role.fromString(request.getRole()));
+  }
+
+  @PostMapping("/company")
+  public UserWithRolesResponse addCompanyProfile(@Valid @RequestBody CompanyRequest request) {
+    return userWithRolesService.addCompanyUser(request, Role.fromString(request.getRole()));
   }
 
   //Take care with this. This should NOT be something everyone can call

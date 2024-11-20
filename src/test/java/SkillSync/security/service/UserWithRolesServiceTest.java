@@ -1,5 +1,7 @@
 package SkillSync.security.service;
 
+import SkillSync.application.repository.CompanyProfileRepository;
+import SkillSync.application.repository.StudentProfileRepository;
 import SkillSync.security.TestUtils;
 import SkillSync.security.dto.UserWithRolesRequest;
 import SkillSync.security.dto.UserWithRolesResponse;
@@ -23,14 +25,20 @@ class UserWithRolesServiceTest {
 
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
+  @Autowired
+  StudentProfileRepository studentProfileRepository;
+  @Autowired
+  CompanyProfileRepository companyProfileRepository;
 
   private boolean dataInitialized = false;
 
   @BeforeEach
   void setUp() {
-    userWithRolesService = new UserWithRolesService(userWithRolesRepository);
+    userWithRolesService = new UserWithRolesService(userWithRolesRepository, studentProfileRepository, companyProfileRepository);
     if(!dataInitialized) {
       userWithRolesRepository.deleteAll();
+      studentProfileRepository.deleteAll();
+      companyProfileRepository.deleteAll();
       TestUtils.setupTestUsers(userWithRolesRepository);
       dataInitialized = true;
     }
@@ -41,30 +49,30 @@ class UserWithRolesServiceTest {
   void getUserWithRoles() {
     UserWithRolesResponse user = userWithRolesService.getUserWithRoles("u1");
     assertEquals(2, user.getRoleNames().size());
-    assertTrue(user.getRoleNames().contains("USER"));
-    assertTrue(user.getRoleNames().contains("ADMIN"));
+    assertTrue(user.getRoleNames().contains("STUDENT"));
+    assertTrue(user.getRoleNames().contains("COMPANY"));
   }
 
   @Test
   void addRole() {
     UserWithRolesResponse user = userWithRolesService.addRole("u4", Role.STUDENT);
     assertEquals(1, user.getRoleNames().size());
-    assertTrue(user.getRoleNames().contains("USER"));
+    assertTrue(user.getRoleNames().contains("STUDENT"));
   }
 
   @Test
   void removeRole() {
     UserWithRolesResponse user = userWithRolesService.removeRole("u1", Role.STUDENT);
     assertEquals(1, user.getRoleNames().size());
-    assertTrue(user.getRoleNames().contains("ADMIN"));
-    user = userWithRolesService.removeRole("u1", Role.ADMIN);
+    assertTrue(user.getRoleNames().contains("COMPANY"));
+    user = userWithRolesService.removeRole("u1", Role.COMPANY);
     assertEquals(0, user.getRoleNames().size());
   }
 
   @Test
   void editUserWithRoles() {
     String originalPassword = userWithRolesRepository.findById("u1").get().getPassword();
-    UserWithRolesRequest user1 = new UserWithRolesRequest("u1New", "new_Password", "newMail@a.dk");
+    UserWithRolesRequest user1 = new UserWithRolesRequest("u1New", "new_Password", "newMail@a.dk", "COMPANY");
     UserWithRolesResponse user = userWithRolesService.editUserWithRoles("u1",user1);
     assertEquals("u1", user.getUserName());  //IMPORTANT: The username should not be changed
     assertEquals("newMail@a.dk", user.getEmail());
@@ -74,7 +82,7 @@ class UserWithRolesServiceTest {
 
   @Test
   void addUserWithRolesWithNoRole() {
-    UserWithRolesRequest user = new UserWithRolesRequest("u5", "new_Password", "xx@x.dk");
+    UserWithRolesRequest user = new UserWithRolesRequest("u5", "new_Password", "xx@x.dk", null);
     UserWithRolesResponse newUser = userWithRolesService.addUserWithRoles(user, null);
     assertEquals(0, newUser.getRoleNames().size());
     assertEquals("u5", newUser.getUserName());
@@ -84,10 +92,10 @@ class UserWithRolesServiceTest {
   }
   @Test
   void addUserWithRolesWithRole() {
-    UserWithRolesRequest user = new UserWithRolesRequest("u5", "new_Password", "xx@x.dk");
+    UserWithRolesRequest user = new UserWithRolesRequest("u5", "new_Password", "xx@x.dk", "STUDENT");
     UserWithRolesResponse newUser = userWithRolesService.addUserWithRoles(user, Role.STUDENT);
     assertEquals(1, newUser.getRoleNames().size());
-    assertTrue(newUser.getRoleNames().contains("USER"));
+    assertTrue(newUser.getRoleNames().contains("STUDENT"));
     assertEquals("u5", newUser.getUserName());
     assertEquals("xx@x.dk", newUser.getEmail());
   }

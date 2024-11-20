@@ -1,5 +1,11 @@
 package SkillSync.security.service;
 
+import SkillSync.application.entity.CompanyProfile;
+import SkillSync.application.entity.StudentProfile;
+import SkillSync.application.repository.CompanyProfileRepository;
+import SkillSync.application.repository.StudentProfileRepository;
+import SkillSync.security.dto.CompanyRequest;
+import SkillSync.security.dto.StudentRequest;
 import SkillSync.security.dto.UserWithRolesRequest;
 import SkillSync.security.dto.UserWithRolesResponse;
 import SkillSync.security.entity.Role;
@@ -13,9 +19,13 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserWithRolesService {
 
   private final UserWithRolesRepository userWithRolesRepository;
+  private final StudentProfileRepository studentProfileRepository;
+  private final CompanyProfileRepository companyProfileRepository;
 
-  public UserWithRolesService(UserWithRolesRepository userWithRolesRepository) {
+  public UserWithRolesService(UserWithRolesRepository userWithRolesRepository, StudentProfileRepository studentProfileRepository, CompanyProfileRepository companyProfileRepository) {
     this.userWithRolesRepository = userWithRolesRepository;
+    this.studentProfileRepository = studentProfileRepository;
+    this.companyProfileRepository = companyProfileRepository;
   }
 
   public UserWithRolesResponse getUserWithRoles(String id){
@@ -53,19 +63,50 @@ public class UserWithRolesService {
    * @return the user added
    */
   public UserWithRolesResponse addUserWithRoles(UserWithRolesRequest body, Role role){
-    if(userWithRolesRepository.existsById(body.getUsername())){
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"This user name is taken");
-    }
-    if(userWithRolesRepository.existsByEmail(body.getEmail())){
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"This email is used by another user");
-    }
-    if(role == null){
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Please specify whether you are a student or a company");
-    }
+    validationCheck(role, body.getUsername(), body.getEmail());
     String pw = body.getPassword();
     UserWithRoles userWithRoles = new UserWithRoles(body.getUsername(), pw, body.getEmail());
     userWithRoles.addRole(role);
+
+
     return new UserWithRolesResponse(userWithRolesRepository.save(userWithRoles));
+  }
+
+  public UserWithRolesResponse addStudentUser(StudentRequest body, Role role){
+    validationCheck(role, body.getUsername(), body.getEmail());
+    String pw = body.getPassword();
+    UserWithRoles userWithRoles = new UserWithRoles(body.getUsername(), pw, body.getEmail());
+    userWithRoles.addRole(role);
+
+    if (role == Role.STUDENT){
+      studentProfileRepository.save(new StudentProfile(userWithRoles, body.getFirstName(), body.getLastName()));
+    }
+    return new UserWithRolesResponse(userWithRolesRepository.save(userWithRoles));
+  }
+
+  public UserWithRolesResponse addCompanyUser(CompanyRequest body, Role role){
+    validationCheck(role, body.getUsername(), body.getEmail());
+
+    String pw = body.getPassword();
+    UserWithRoles userWithRoles = new UserWithRoles(body.getUsername(), pw, body.getEmail());
+    userWithRoles.addRole(role);
+
+    if (role == Role.COMPANY){
+      companyProfileRepository.save(new CompanyProfile(userWithRoles, body.getCompanyName(), body.getWebsite(), body.getLocation()));
+    }
+    return new UserWithRolesResponse(userWithRolesRepository.save(userWithRoles));
+  }
+
+  private void validationCheck(Role role, String username, String email){
+      if(userWithRolesRepository.existsById(username)){
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"This user name is taken");
+      }
+      if(userWithRolesRepository.existsByEmail(email)){
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"This email is used by another user");
+      }
+      if(role == null){
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Please specify whether you are a student or a company");
+      }
   }
 
 }
