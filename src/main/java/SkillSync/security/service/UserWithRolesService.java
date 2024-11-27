@@ -44,7 +44,7 @@ public class UserWithRolesService {
   public UserWithRolesResponse removeRole(String username , Role role){
 
     UserWithRoles user = userWithRolesRepository.findById(username).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
-    user.removeRole(role);
+    user.clearRole();
     return new UserWithRolesResponse(userWithRolesRepository.save(user));
   }
 

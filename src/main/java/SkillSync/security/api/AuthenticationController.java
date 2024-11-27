@@ -67,9 +67,9 @@ public class AuthenticationController {
       String token = encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
 
 
-      List<String> roles = user.getRoles().stream().map(role -> role.toString()).collect(Collectors.toList());
+      String role = user.getRole().toString();
       return ResponseEntity.ok()
-              .body(new LoginResponse(user.getUsername(), token, roles));
+              .body(new LoginResponse(user.getUsername(), token, role));
 
     } catch (BadCredentialsException e) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, UserDetailsServiceImp.WRONG_USERNAME_OR_PASSWORD);
