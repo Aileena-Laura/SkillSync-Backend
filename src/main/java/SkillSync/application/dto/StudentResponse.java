@@ -11,11 +11,14 @@ public class StudentResponse {
     String email;
     String firstName;
     String lastName;
+    String role;
+
 
     public StudentResponse(StudentProfile studentProfile){
         this.username = studentProfile.getAccountId();
         this.email = studentProfile.getUserId().getEmail();
         this.firstName = studentProfile.getFirstName();
         this.lastName = studentProfile.getLastName();
+        this.role = studentProfile.getUserId().getRole().toString();
     }
 }

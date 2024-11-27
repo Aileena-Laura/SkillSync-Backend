@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,9 +61,8 @@ public class UserWithRoles implements UserDetails {
 
   @Enumerated(EnumType.STRING)
   @Column(columnDefinition = "ENUM('STUDENT','COMPANY')")
-  @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "security_role")
-  List<Role> roles = new ArrayList<>();
+  private Role role;
 
   public UserWithRoles() {}
 
@@ -80,19 +80,20 @@ public class UserWithRoles implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return roles.stream().map(role -> new SimpleGrantedAuthority(role.toString())).collect(Collectors.toList());
+    if (role == null) {
+      return Collections.emptyList(); // Return an empty list if no role is assigned
+    }
+    return List.of(new SimpleGrantedAuthority(role.toString())); // Return the single role as a GrantedAuthority
   }
 
   public void addRole(Role roleToAdd) {
-    if (!roles.contains(roleToAdd)) {
-      roles.add(roleToAdd);
+    if (role == null || !role.equals(roleToAdd)) {
+      role = roleToAdd;
     }
   }
 
-  public void removeRole(Role roleToRemove) {
-    if (roles.contains(roleToRemove)) {
-      roles.remove(roleToRemove);
-    }
+  public void clearRole() {
+    this.role = null; // Reset the role to no value (null)
   }
 
   //You can, but are NOT expected to use the fields below

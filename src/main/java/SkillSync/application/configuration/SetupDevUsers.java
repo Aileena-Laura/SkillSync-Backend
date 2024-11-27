@@ -48,7 +48,6 @@ public class SetupDevUsers implements ApplicationRunner {
         UserWithRoles user3 = new UserWithRoles("user3", passwordUsedByAll, "user3@a.dk");
         UserWithRoles user4 = new UserWithRoles("user4", passwordUsedByAll, "user4@a.dk");
         user1.addRole(Role.STUDENT);
-        user1.addRole(Role.COMPANY);
         user2.addRole(Role.STUDENT);
         user3.addRole(Role.COMPANY);
         userWithRolesRepository.save(user1);
