@@ -1,0 +1,15 @@
+package SkillSync.application.dto;
+
+import SkillSync.application.entity.Project;
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ProjectRequest {
+    private String title;
+    private String description;
+    private String companyId;
+}

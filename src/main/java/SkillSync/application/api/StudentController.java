@@ -1,12 +1,9 @@
 package SkillSync.application.api;
 
+import SkillSync.application.dto.StudentRequest;
 import SkillSync.application.dto.StudentResponse;
 import SkillSync.application.service.StudentService;
-import SkillSync.security.dto.UserWithRolesResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/student")
@@ -21,5 +18,15 @@ public class StudentController {
     @GetMapping("/{username}")
     public StudentResponse getStudentProfileByUsername(@PathVariable String username){
         return studentService.getStudentProfile(username);
+    }
+
+    @PatchMapping("/description/{id}")
+    public StudentResponse editStudentDescription(@PathVariable String id, @RequestBody StudentRequest body){
+        return studentService.editStudentDescription(id, body);
+    }
+
+    @PatchMapping("/{id}")
+    public StudentResponse editBasicInfo(@PathVariable String id, @RequestBody StudentRequest body){
+        return studentService.editStudentBasicInfo(id, body);
     }
 }

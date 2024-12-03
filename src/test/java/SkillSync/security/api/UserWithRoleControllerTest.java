@@ -1,9 +1,8 @@
 package SkillSync.security.api;
 
-import SkillSync.application.entity.StudentProfile;
 import SkillSync.application.repository.CompanyProfileRepository;
 import SkillSync.application.repository.StudentProfileRepository;
-import SkillSync.security.dto.StudentRequest;
+import SkillSync.security.dto.StudentSecurityRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import SkillSync.security.TestUtils;
 import SkillSync.security.dto.LoginRequest;
@@ -87,7 +86,7 @@ class UserWithRoleControllerTest {
   @Test
   void addUsersWithRolesNoRolesShouldFail() throws Exception {
     // Arrange: Create a request without roles
-    StudentRequest studentRequest = new StudentRequest("u100", "secret", "u100@a.dk", null, "Laura", "Ramgil");
+    StudentSecurityRequest studentRequest = new StudentSecurityRequest("u100", "secret", "u100@a.dk", null, "Laura", "Ramgil");
 
     // Act & Assert: Perform the request and expect failure due to validation
     mockMvc.perform(post("/api/user-with-role/student")

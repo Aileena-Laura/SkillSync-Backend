@@ -1,8 +1,7 @@
 package SkillSync.security.api;
 
-import SkillSync.security.dto.CompanyRequest;
-import SkillSync.security.dto.StudentRequest;
-import SkillSync.security.dto.UserWithRolesRequest;
+import SkillSync.security.dto.CompanySecurityRequest;
+import SkillSync.security.dto.StudentSecurityRequest;
 import SkillSync.security.dto.UserWithRolesResponse;
 import SkillSync.security.entity.Role;
 import SkillSync.security.service.UserWithRolesService;
@@ -25,12 +24,12 @@ public class UserWithRoleController {
 
   //Anonymous users can call this. Set DEFAULT_ROLE_TO_ASSIGN to null if no role should be added
   @PostMapping("/student")
-  public UserWithRolesResponse addStudentProfile(@Valid @RequestBody StudentRequest request) {
+  public UserWithRolesResponse addStudentProfile(@Valid @RequestBody StudentSecurityRequest request) {
     return userWithRolesService.addStudentUser(request, Role.fromString(request.getRole()));
   }
 
   @PostMapping("/company")
-  public UserWithRolesResponse addCompanyProfile(@Valid @RequestBody CompanyRequest request) {
+  public UserWithRolesResponse addCompanyProfile(@Valid @RequestBody CompanySecurityRequest request) {
     return userWithRolesService.addCompanyUser(request, Role.fromString(request.getRole()));
   }
 

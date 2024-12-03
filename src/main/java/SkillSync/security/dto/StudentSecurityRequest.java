@@ -1,14 +1,13 @@
 package SkillSync.security.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompanyRequest {
+public class StudentSecurityRequest {
     @NotBlank(message="Username is not provided")
     String username;
     @NotBlank(message="Password is not provided")
@@ -17,7 +16,6 @@ public class CompanyRequest {
     String email;
     @NotBlank(message="Role is not provided")
     String role;
-    String companyName;
-    String website;
-    String location;
+    String firstName;
+    String lastName;
 }

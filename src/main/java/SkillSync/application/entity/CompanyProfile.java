@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,10 +17,12 @@ import lombok.Setter;
 @Entity
 public class CompanyProfile {
     @Id
+    @Column(name = "company_id")
     private String accountId;
 
     private String companyName;
     private String website;
+    private String description;
     private String location;
 
     @OneToOne
@@ -25,10 +30,20 @@ public class CompanyProfile {
     @MapsId
     private UserWithRoles userId;
 
+    @OneToMany(mappedBy = "companyProfile", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Project> projects;
+
     public CompanyProfile(UserWithRoles user, String companyName, String website, String location){
         this.userId = user;
         this.companyName = companyName;
         this.website = website;
         this.location = location;
+    }
+
+    public void addProject(Project project){
+        if(projects == null){
+            projects = new ArrayList<>();
+        }
+        projects.add(project);
     }
 }

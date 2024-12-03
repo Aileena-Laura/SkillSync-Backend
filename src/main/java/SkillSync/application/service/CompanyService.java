@@ -1,6 +1,8 @@
 package SkillSync.application.service;
 
+import SkillSync.application.dto.CompanyRequest;
 import SkillSync.application.dto.CompanyResponse;
+import SkillSync.application.dto.StudentRequest;
 import SkillSync.application.dto.StudentResponse;
 import SkillSync.application.entity.CompanyProfile;
 import SkillSync.application.entity.StudentProfile;
@@ -21,5 +23,24 @@ public class CompanyService {
     public CompanyResponse getCompanyProfile(String id){
         CompanyProfile company = companyProfileRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Company not found"));
         return new CompanyResponse(company);
+    }
+
+    public CompanyResponse editCompanyDescription(String id, CompanyRequest body){
+        CompanyProfile company = companyProfileRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No company with this id found"));
+
+        company.setDescription(body.getDescription());
+        return new CompanyResponse(companyProfileRepository.save(company));
+    }
+
+    public CompanyResponse editCompanyBasicInfo(String id, CompanyRequest body){
+        CompanyProfile company = companyProfileRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No company with this id found"));
+        company.setCompanyName(body.getCompanyName());
+        company.setLocation(body.getLocation());
+        company.setWebsite(body.getWebsite());
+        company.getUserId().setEmail(body.getEmail());
+
+        return new CompanyResponse(companyProfileRepository.save(company));
     }
 }

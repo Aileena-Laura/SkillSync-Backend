@@ -67,8 +67,13 @@ public class SecurityConfig {
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/user-with-role/company")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/user-with-role/student")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/student")).hasAuthority("STUDENT")
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/skill")).hasAuthority("STUDENT")
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/company")).hasAuthority("COMPANY")
-
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.DELETE, "/api/skill/{id}")).hasAuthority("STUDENT")
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.PATCH, "/api/student/description/{id}")).hasAuthority("STUDENT")
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.PATCH, "/api/student/{id}")).hasAuthority("STUDENT")
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.PATCH, "/api/company/description/{id}")).hasAuthority("COMPANY")
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.PATCH, "/api/company/{id}")).hasAuthority("COMPANY")
 
             //This is for demo purposes only, and should be removed for a real system
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/demo/anonymous")).permitAll()

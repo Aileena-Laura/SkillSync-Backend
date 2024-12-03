@@ -4,8 +4,8 @@ import SkillSync.application.entity.CompanyProfile;
 import SkillSync.application.entity.StudentProfile;
 import SkillSync.application.repository.CompanyProfileRepository;
 import SkillSync.application.repository.StudentProfileRepository;
-import SkillSync.security.dto.CompanyRequest;
-import SkillSync.security.dto.StudentRequest;
+import SkillSync.security.dto.CompanySecurityRequest;
+import SkillSync.security.dto.StudentSecurityRequest;
 import SkillSync.security.dto.UserWithRolesRequest;
 import SkillSync.security.dto.UserWithRolesResponse;
 import SkillSync.security.entity.Role;
@@ -72,7 +72,7 @@ public class UserWithRolesService {
     return new UserWithRolesResponse(userWithRolesRepository.save(userWithRoles));
   }
 
-  public UserWithRolesResponse addStudentUser(StudentRequest body, Role role){
+  public UserWithRolesResponse addStudentUser(StudentSecurityRequest body, Role role){
     validationCheck(role, body.getUsername(), body.getEmail());
     String pw = body.getPassword();
     UserWithRoles userWithRoles = new UserWithRoles(body.getUsername(), pw, body.getEmail());
@@ -84,7 +84,7 @@ public class UserWithRolesService {
     return new UserWithRolesResponse(userWithRolesRepository.save(userWithRoles));
   }
 
-  public UserWithRolesResponse addCompanyUser(CompanyRequest body, Role role){
+  public UserWithRolesResponse addCompanyUser(CompanySecurityRequest body, Role role){
     validationCheck(role, body.getUsername(), body.getEmail());
 
     String pw = body.getPassword();
