@@ -12,6 +12,7 @@ public class CompanyResponse {
     String companyName;
     String role;
     String location;
+    String description;
     String website;
 
     public CompanyResponse(CompanyProfile companyProfile){
@@ -21,5 +22,6 @@ public class CompanyResponse {
         this.role = companyProfile.getUserId().getRole().toString();
         this.location = companyProfile.getLocation();
         this.website = companyProfile.getWebsite();
+        this.description = companyProfile.getDescription();
     }
 }
