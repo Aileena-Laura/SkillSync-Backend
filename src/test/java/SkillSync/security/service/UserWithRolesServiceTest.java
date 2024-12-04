@@ -47,24 +47,24 @@ class UserWithRolesServiceTest {
 
   @Test
   void getUserWithRole() {
-    UserWithRolesResponse user = userWithRolesService.getUserWithRoles("u2");
+    UserWithRolesResponse user = userWithRolesService.getUserWithRoles("student2");
     assertTrue(user.getRole().contains("COMPANY"));
   }
 
   @Test
   void addRole() {
-    UserWithRolesResponse user = userWithRolesService.addRole("u3", Role.STUDENT);
+    UserWithRolesResponse user = userWithRolesService.addRole("student3", Role.STUDENT);
     assertTrue(user.getRole().contains("STUDENT"));
   }
 
   @Test
   void editUserWithRoles() {
-    String originalPassword = userWithRolesRepository.findById("u1").get().getPassword();
+    String originalPassword = userWithRolesRepository.findById("student1").get().getPassword();
     UserWithRolesRequest user1 = new UserWithRolesRequest("u1New", "new_Password", "newMail@a.dk", "COMPANY");
-    UserWithRolesResponse user = userWithRolesService.editUserWithRoles("u1",user1);
-    assertEquals("u1", user.getUserName());  //IMPORTANT: The username should not be changed
+    UserWithRolesResponse user = userWithRolesService.editUserWithRoles("student1",user1);
+    assertEquals("student1", user.getUserName());  //IMPORTANT: The username should not be changed
     assertEquals("newMail@a.dk", user.getEmail());
-    UserWithRoles editedUser = userWithRolesRepository.findById("u1").get();
+    UserWithRoles editedUser = userWithRolesRepository.findById("student1").get();
     assertNotEquals(originalPassword, editedUser.getPassword());
   }
 
