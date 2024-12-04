@@ -1,8 +1,9 @@
 package SkillSync.security.api;
 
+import SkillSync.application.repository.StudentProfileRepository;
+import SkillSync.security.TestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import SkillSync.security.TestUtils;
 import SkillSync.security.dto.LoginRequest;
 import SkillSync.security.repository.UserWithRolesRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -35,6 +35,8 @@ public class AuthenticationTest {
   MockMvc mockMvc;
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
+  @Autowired
+    StudentProfileRepository studentProfileRepository;
 
 
   private final ObjectMapper objectMapper = new ObjectMapper();
@@ -44,7 +46,7 @@ public class AuthenticationTest {
   void setUp() throws Exception {
     if(!isDataInitialized) {
       isDataInitialized = true;
-      TestUtils.setupTestUsers(userWithRolesRepository);
+      TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository);
     }
   }
 

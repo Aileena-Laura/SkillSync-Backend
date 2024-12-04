@@ -1,18 +1,17 @@
 package SkillSync.security.api;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import SkillSync.application.repository.StudentProfileRepository;
 import SkillSync.security.TestUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import SkillSync.security.dto.LoginRequest;
 import SkillSync.security.dto.LoginResponse;
 import SkillSync.security.repository.UserWithRolesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -35,6 +34,8 @@ public class AuthorizationTest {
   MockMvc mockMvc;
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
+  @Autowired
+  StudentProfileRepository studentProfileRepository;
 
 
   private final ObjectMapper objectMapper = new ObjectMapper();
@@ -51,7 +52,7 @@ public class AuthorizationTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    TestUtils.setupTestUsers(userWithRolesRepository);
+    TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository);
     if(userStudentJwtToken == null) {
       LoginAndGetTokens();
     }

@@ -39,7 +39,7 @@ class UserWithRolesServiceTest {
       userWithRolesRepository.deleteAll();
       studentProfileRepository.deleteAll();
       companyProfileRepository.deleteAll();
-      TestUtils.setupTestUsers(userWithRolesRepository);
+      TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository);
       dataInitialized = true;
     }
   }

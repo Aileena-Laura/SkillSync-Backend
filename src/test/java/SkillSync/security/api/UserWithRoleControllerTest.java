@@ -2,9 +2,9 @@ package SkillSync.security.api;
 
 import SkillSync.application.repository.CompanyProfileRepository;
 import SkillSync.application.repository.StudentProfileRepository;
+import SkillSync.security.TestUtils;
 import SkillSync.security.dto.StudentSecurityRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import SkillSync.security.TestUtils;
 import SkillSync.security.dto.LoginRequest;
 import SkillSync.security.dto.LoginResponse;
 import SkillSync.security.dto.UserWithRolesRequest;
@@ -64,7 +64,7 @@ class UserWithRoleControllerTest {
       userWithRolesRepository.deleteAll();
       studentProfileRepository.deleteAll();
       companyProfileRepository.deleteAll();
-      TestUtils.setupTestUsers(userWithRolesRepository);
+      TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository);
       companyToken = loginAndGetToken("u2", "secret");
       studentToken = loginAndGetToken("u1", "secret");
       dataInitialized = true;

@@ -7,6 +7,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface SkillRepository extends JpaRepository<Skill, Integer> {
-    Boolean existsBySkillName(String skillName);
-    Skill findBySkillName(String skillName);
 }
