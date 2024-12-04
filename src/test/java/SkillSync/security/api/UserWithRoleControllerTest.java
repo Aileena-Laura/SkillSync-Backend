@@ -65,8 +65,8 @@ class UserWithRoleControllerTest {
       studentProfileRepository.deleteAll();
       companyProfileRepository.deleteAll();
       TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository);
-      companyToken = loginAndGetToken("u2", "secret");
-      studentToken = loginAndGetToken("u1", "secret");
+      companyToken = loginAndGetToken("student1", "secret");
+      studentToken = loginAndGetToken("student2", "secret");
       dataInitialized = true;
     }
   }

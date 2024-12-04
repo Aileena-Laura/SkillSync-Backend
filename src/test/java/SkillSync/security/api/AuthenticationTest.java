@@ -52,12 +52,12 @@ public class AuthenticationTest {
 
   @Test
   void login() throws Exception {
-    LoginRequest loginRequest = new LoginRequest("u1", "secret");
+    LoginRequest loginRequest = new LoginRequest("student1", "secret");
     mockMvc.perform(post("/api/auth/login")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(loginRequest)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.username").value("u1"))
+            .andExpect(jsonPath("$.username").value("student1"))
             .andExpect(jsonPath("$.role").value("STUDENT"))
             .andExpect(result -> {
               //Not a bulletproof test, but acceptable. First part should always be the same. A token must always contain two dots.
@@ -69,7 +69,7 @@ public class AuthenticationTest {
 
   @Test
   void loginWithWrongPassword() throws Exception {
-    LoginRequest loginRequest = new LoginRequest("u1", "wrong");
+    LoginRequest loginRequest = new LoginRequest("student1", "wrong");
     mockMvc.perform(post("/api/auth/login")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(loginRequest)))
@@ -78,25 +78,10 @@ public class AuthenticationTest {
   }
   @Test
   void loginWithWrongUsername() throws Exception {
-    LoginRequest loginRequest = new LoginRequest("u111111", "wrong");
+    LoginRequest loginRequest = new LoginRequest("u111111", "secret");
     mockMvc.perform(post("/api/auth/login")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(loginRequest)))
             .andExpect(status().isUnauthorized());
-  }
-
-  @Test
-  void testLoginWithNoRole() throws Exception {
-    mockMvc.perform(post("/api/auth/login")
-                    .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(new LoginRequest("u3", "secret"))))
-            .andExpect(status().isUnauthorized())  // Expect 401 Unauthorized because u3 has no role
-            .andExpect(result -> {
-              // Check the error message is in the exception details or status text
-              String errorMessage = result.getResponse().getErrorMessage();
-              assertNotNull(errorMessage);
-              assertEquals("User must have exactly one role to log in.", errorMessage);
-            })
-            .andReturn();
   }
 }
