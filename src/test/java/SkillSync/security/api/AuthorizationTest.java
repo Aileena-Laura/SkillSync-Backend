@@ -1,18 +1,17 @@
 package SkillSync.security.api;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import SkillSync.application.repository.StudentProfileRepository;
 import SkillSync.security.TestUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import SkillSync.security.dto.LoginRequest;
 import SkillSync.security.dto.LoginResponse;
 import SkillSync.security.repository.UserWithRolesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -35,26 +34,26 @@ public class AuthorizationTest {
   MockMvc mockMvc;
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
+  @Autowired
+  StudentProfileRepository studentProfileRepository;
 
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
-  public static String userJwtToken;
-  public static String adminJwtToken;
-  public static String user_adminJwtToken;
-  public static String user_noRolesJwtToken;
+  public static String userCompanyJwtToken;
+  public static String userStudentJwtToken;
+  public static String userNoRolesJwtToken;
 
   void LoginAndGetTokens() throws Exception {
-    user_adminJwtToken = loginAndGetToken("u1","secret");
-    userJwtToken = loginAndGetToken("u2","secret");
-    adminJwtToken = loginAndGetToken("u3","secret");
-    user_noRolesJwtToken = loginAndGetToken("u4","secret");
+    userStudentJwtToken = loginAndGetToken("u1","secret");
+    userCompanyJwtToken = loginAndGetToken("u2","secret");
+    userNoRolesJwtToken = loginAndGetToken("u3","secret");
   }
 
   @BeforeEach
   void setUp() throws Exception {
-    TestUtils.setupTestUsers(userWithRolesRepository);
-    if(user_adminJwtToken==null) {
+    TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository);
+    if(userStudentJwtToken == null) {
       LoginAndGetTokens();
     }
   }
@@ -68,38 +67,5 @@ public class AuthorizationTest {
             .andReturn();
     LoginResponse loginResponse = objectMapper.readValue(response.getResponse().getContentAsString(), LoginResponse.class);
     return loginResponse.getToken();
-  }
-
-
- /* @Test
-  void testRolesAdmin() throws Exception {
-    mockMvc.perform(get("/api/security-tests/admin")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminJwtToken)
-                    .contentType("application/json"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.userName").value("u3"))
-            .andExpect(jsonPath("$.message").value("Admin"));
-  }*/
-  @Test
-  void testEndpointAdminWrongRole() throws Exception {
-    mockMvc.perform(get("/api/security-tests/admin")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + userJwtToken)
-                    .contentType("application/json"))
-            .andExpect(status().isForbidden());
-  }
-  @Test
-  void testRolesAdminNotLoggedIn() throws Exception {
-    mockMvc.perform(get("/api/security-tests/admin")
-                    .contentType("application/json"))
-            .andExpect(status().isUnauthorized());
-  }
-  @Test
-  void testAuthenticatedNoRoles() throws Exception {
-    mockMvc.perform(get("/api/security-tests/authenticated")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + user_noRolesJwtToken)
-                    .contentType("application/json"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.userName").value("u4"))
-            .andExpect(jsonPath("$.message").value("Authenticated user"));
   }
 }

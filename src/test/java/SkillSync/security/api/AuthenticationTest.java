@@ -1,8 +1,9 @@
 package SkillSync.security.api;
 
+import SkillSync.application.repository.StudentProfileRepository;
+import SkillSync.security.TestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import SkillSync.security.TestUtils;
 import SkillSync.security.dto.LoginRequest;
 import SkillSync.security.repository.UserWithRolesRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,6 +35,8 @@ public class AuthenticationTest {
   MockMvc mockMvc;
   @Autowired
   UserWithRolesRepository userWithRolesRepository;
+  @Autowired
+    StudentProfileRepository studentProfileRepository;
 
 
   private final ObjectMapper objectMapper = new ObjectMapper();
@@ -43,7 +46,7 @@ public class AuthenticationTest {
   void setUp() throws Exception {
     if(!isDataInitialized) {
       isDataInitialized = true;
-      TestUtils.setupTestUsers(userWithRolesRepository);
+      TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository);
     }
   }
 
@@ -55,8 +58,7 @@ public class AuthenticationTest {
                     .content(objectMapper.writeValueAsString(loginRequest)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.username").value("u1"))
-            .andExpect(jsonPath("$.roles", hasSize(2)))
-            .andExpect(jsonPath("$.roles", containsInAnyOrder("STUDENT","COMPANY")))
+            .andExpect(jsonPath("$.role").value("STUDENT"))
             .andExpect(result -> {
               //Not a bulletproof test, but acceptable. First part should always be the same. A token must always contain two dots.
               String token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
@@ -81,5 +83,20 @@ public class AuthenticationTest {
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(loginRequest)))
             .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void testLoginWithNoRole() throws Exception {
+    mockMvc.perform(post("/api/auth/login")
+                    .contentType("application/json")
+                    .content(objectMapper.writeValueAsString(new LoginRequest("u3", "secret"))))
+            .andExpect(status().isUnauthorized())  // Expect 401 Unauthorized because u3 has no role
+            .andExpect(result -> {
+              // Check the error message is in the exception details or status text
+              String errorMessage = result.getResponse().getErrorMessage();
+              assertNotNull(errorMessage);
+              assertEquals("User must have exactly one role to log in.", errorMessage);
+            })
+            .andReturn();
   }
 }
