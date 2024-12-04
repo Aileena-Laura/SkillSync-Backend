@@ -44,36 +44,46 @@ public class AuthenticationController {
 
   @PostMapping("login")
   public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-
     try {
+      // Create authentication token with username and password
       UsernamePasswordAuthenticationToken uat = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+
+      // Authenticate user
       Authentication authentication = authenticationManager.authenticate(uat);
 
+      // Get authenticated user
       UserWithRoles user = (UserWithRoles) authentication.getPrincipal();
       Instant now = Instant.now();
-      long expiry = tokenExpiration;
-      String scope = authentication.getAuthorities().stream()
-              .map(GrantedAuthority::getAuthority)
-              .collect(joining(" "));
 
+      // Ensure the user has exactly one role
+      if (authentication.getAuthorities().size() != 1) {
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User must have exactly one role to log in.");
+      }
+
+      // Extract the single role from the authorities
+      String role = authentication.getAuthorities().iterator().next().getAuthority();
+
+      // Generate JWT claims
       JwtClaimsSet claims = JwtClaimsSet.builder()
-              .issuer(tokenIssuer)  //Only this for simplicity
+              .issuer(tokenIssuer)
               .issuedAt(now)
               .expiresAt(now.plusSeconds(tokenExpiration))
               .subject(user.getUsername())
-              .claim("roles", scope)
+              .claim("role", role)  // Store the single role
               .build();
+
+      // Generate JWT token
       JwsHeader jwsHeader = JwsHeader.with(() -> "HS256").build();
       String token = encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
 
-
-      String role = user.getRole().toString();
+      // Return the response with username, token, and role
       return ResponseEntity.ok()
               .body(new LoginResponse(user.getUsername(), token, role));
 
     } catch (BadCredentialsException e) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, UserDetailsServiceImp.WRONG_USERNAME_OR_PASSWORD);
+    } catch (ResponseStatusException e) {
+      throw e;  // Rethrow the unauthorized exception for invalid role count
     }
-
   }
 }

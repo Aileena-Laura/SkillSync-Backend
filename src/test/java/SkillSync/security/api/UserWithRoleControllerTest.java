@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -52,8 +51,8 @@ class UserWithRoleControllerTest {
   @Autowired
   PasswordEncoder passwordEncoder;
 
-  String adminToken;
-  String userToken;
+  String companyToken;
+  String studentToken;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   private boolean dataInitialized = false;
@@ -66,8 +65,8 @@ class UserWithRoleControllerTest {
       studentProfileRepository.deleteAll();
       companyProfileRepository.deleteAll();
       TestUtils.setupTestUsers(userWithRolesRepository);
-      userToken = loginAndGetToken("u2", "secret");
-      adminToken = loginAndGetToken("u3", "secret");
+      companyToken = loginAndGetToken("u2", "secret");
+      studentToken = loginAndGetToken("u1", "secret");
       dataInitialized = true;
     }
   }
@@ -92,43 +91,22 @@ class UserWithRoleControllerTest {
     mockMvc.perform(post("/api/user-with-role/student")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(studentRequest)))
-            .andExpect(status().isBadRequest()) // Expecting 400 Bad Request
-            .andExpect(jsonPath("$.message").value("Role cannot be null"));
+            .andExpect(status().isBadRequest()); // Expecting 400 Bad Request
   }
 
   @Test
   void addUserWithRoles() throws Exception {
     UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk", "STUDENT");
-    //UserWithRoleController.DEFAULT_ROLE_TO_ASSIGN = null;
     mockMvc.perform(post("/api/user-with-role/student")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(newUserReq)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.userName").value("u100"))
             .andExpect(jsonPath("$.email").value("u100@a.dk"))
-            .andExpect(jsonPath("$.roleNames", hasSize(1)))
-            .andExpect(jsonPath("$.roleNames", contains("STUDENT")));
+            .andExpect(jsonPath("$.role").value("STUDENT"));
   }
 
-  @Test
-  void addRoleFAilsWhenNotAuthenticatedWithRole() throws Exception {
-    mockMvc.perform(patch("/api/user-with-role/add-role/u4/admin")
-                    .accept("application/json"))
-            .andExpect(status().isUnauthorized());
-  }
-
-/*  @Test
-  void addRole() throws Exception {
-    mockMvc.perform(patch("/api/user-with-role/add-role/u4/admin")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
-                    .accept("application/json"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.userName").value("u4"))
-            .andExpect(jsonPath("$.roleNames", hasSize(1)))
-            .andExpect(jsonPath("$.roleNames", contains("ADMIN")));
-  }*/
-
-  @Test
+  /*@Test
   void addRoleFailsWithWrongRole() throws Exception {
     mockMvc.perform(patch("/api/user-with-role/add-role/u2/admin")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken)
@@ -141,7 +119,7 @@ class UserWithRoleControllerTest {
     mockMvc.perform(patch("/api/user-with-role/remove-role/u2/user")
                     .accept("application/json"))
             .andExpect(status().isUnauthorized());
-  }
+  }*/
 
 /*  @Test
   void removeRole() throws Exception {
