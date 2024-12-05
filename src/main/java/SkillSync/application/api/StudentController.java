@@ -30,3 +30,5 @@ public class StudentController {
         return studentService.editStudentBasicInfo(id, body);
     }
 }
+
+// Very important comment :)
