@@ -25,6 +25,7 @@ public class SkillService {
         StudentProfile student = studentRepository.findById(body.getStudentId()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No student with this id found"));
         Skill newSkill = new Skill(body.getSkillName(), SkillExperience.valueOf(body.getExperience()));
+        student.addSkill(newSkill);
         newSkill.addStudent(student);
         return new SkillResponse(skillRepository.save(newSkill));
     }

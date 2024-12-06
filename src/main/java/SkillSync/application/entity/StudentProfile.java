@@ -28,8 +28,8 @@ public class StudentProfile {
     @MapsId
     private UserWithRoles userId;
 
-    @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<Skill> skills;
+    @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Skill> skills = new ArrayList<>();
 
     public StudentProfile(UserWithRoles user, String firstName, String lastName){
         this.userId = user;
@@ -38,9 +38,12 @@ public class StudentProfile {
     }
 
     public void addSkill(Skill skill){
-        if(skills == null){
-            skills = new ArrayList<>();
-        }
         skills.add(skill);
+        skill.setStudentProfile(this);
+    }
+
+    public void removeSkill(Skill skill) {
+        skills.remove(skill);
+        skill.setStudentProfile(null);
     }
 }
