@@ -1,6 +1,7 @@
 package SkillSync.security.api;
 
 
+import SkillSync.application.repository.CompanyProfileRepository;
 import SkillSync.application.repository.StudentProfileRepository;
 import SkillSync.security.TestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,8 @@ public class AuthorizationTest {
   UserWithRolesRepository userWithRolesRepository;
   @Autowired
   StudentProfileRepository studentProfileRepository;
+  @Autowired
+  CompanyProfileRepository companyProfileRepository;
 
 
   private final ObjectMapper objectMapper = new ObjectMapper();
@@ -52,7 +55,7 @@ public class AuthorizationTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository);
+    TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository, companyProfileRepository);
     if(userStudentJwtToken == null) {
       LoginAndGetTokens();
     }

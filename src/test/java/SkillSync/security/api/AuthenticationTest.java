@@ -1,5 +1,6 @@
 package SkillSync.security.api;
 
+import SkillSync.application.repository.CompanyProfileRepository;
 import SkillSync.application.repository.StudentProfileRepository;
 import SkillSync.security.TestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,6 +38,8 @@ public class AuthenticationTest {
   UserWithRolesRepository userWithRolesRepository;
   @Autowired
     StudentProfileRepository studentProfileRepository;
+  @Autowired
+  CompanyProfileRepository companyProfileRepository;
 
 
   private final ObjectMapper objectMapper = new ObjectMapper();
@@ -46,7 +49,7 @@ public class AuthenticationTest {
   void setUp() throws Exception {
     if(!isDataInitialized) {
       isDataInitialized = true;
-      TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository);
+      TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository, companyProfileRepository);
     }
   }
 

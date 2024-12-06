@@ -3,6 +3,7 @@ package SkillSync.application.service;
 import SkillSync.application.dto.SkillRequest;
 import SkillSync.application.dto.SkillResponse;
 import SkillSync.application.entity.Skill;
+import SkillSync.application.repository.CompanyProfileRepository;
 import SkillSync.application.repository.SkillRepository;
 import SkillSync.application.repository.StudentProfileRepository;
 import SkillSync.security.TestUtils;
@@ -25,6 +26,8 @@ public class SkillServiceTest {
     SkillRepository skillRepository;
     @Autowired
     UserWithRolesRepository userWithRolesRepository;
+    @Autowired
+    CompanyProfileRepository companyProfileRepository;
     SkillService service;
     private boolean dataInitialized = false;
 
@@ -35,7 +38,7 @@ public class SkillServiceTest {
             userWithRolesRepository.deleteAll();
             studentRepository.deleteAll();
             skillRepository.deleteAll();
-            TestUtils.setupTestUsers(userWithRolesRepository, studentRepository);
+            TestUtils.setupTestUsers(userWithRolesRepository, studentRepository, companyProfileRepository);
             dataInitialized = true;
         }
     }
