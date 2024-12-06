@@ -4,6 +4,8 @@ import SkillSync.application.dto.CompanyRequest;
 import SkillSync.application.dto.CompanyResponse;
 import SkillSync.application.service.CompanyService;
 import SkillSync.security.dto.CompanySecurityRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,5 +30,11 @@ public class CompanyController {
     @PatchMapping("/{id}")
     public CompanyResponse editBasicInfo(@PathVariable String id, @RequestBody CompanyRequest body){
         return companyService.editCompanyBasicInfo(id, body);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCompanyAccount(@PathVariable String id){
+        companyService.deleteCompanyAccount(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body("{\"message\": \"Account deleted successfully\"}");
     }
 }

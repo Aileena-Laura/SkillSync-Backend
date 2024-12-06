@@ -13,12 +13,10 @@ import org.springframework.web.server.ResponseStatusException;
 public class StudentService {
     private final StudentProfileRepository studentProfileRepository;
     private final SkillRepository skillRepository;
-    private final SkillService skillService;
 
-    public StudentService(StudentProfileRepository studentProfileRepository, SkillRepository skillRepository, SkillService skillService) {
+    public StudentService(StudentProfileRepository studentProfileRepository, SkillRepository skillRepository) {
         this.studentProfileRepository = studentProfileRepository;
         this.skillRepository = skillRepository;
-        this.skillService = skillService;
     }
 
     public StudentResponse getStudentProfile(String id){
@@ -44,5 +42,10 @@ public class StudentService {
         student.getUserId().setEmail(body.getEmail());
 
         return new StudentResponse(studentProfileRepository.save(student));
+    }
+
+    public void deleteStudentAccount(String id){
+        StudentProfile student = studentProfileRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
+        studentProfileRepository.delete(student);
     }
 }

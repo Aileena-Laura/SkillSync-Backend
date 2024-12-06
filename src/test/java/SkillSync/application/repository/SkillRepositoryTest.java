@@ -17,6 +17,8 @@ public class SkillRepositoryTest {
     SkillRepository skillRepository;
     @Autowired
     UserWithRolesRepository userWithRolesRepository;
+    @Autowired
+    CompanyProfileRepository companyProfileRepository;
 
     StudentProfile student;
 
@@ -24,7 +26,7 @@ public class SkillRepositoryTest {
     void setup(){
         userWithRolesRepository.deleteAll();
         studentRepository.deleteAll();
-        TestUtils.setupTestUsers(userWithRolesRepository, studentRepository);
+        TestUtils.setupTestUsers(userWithRolesRepository, studentRepository, companyProfileRepository);
     }
 
 

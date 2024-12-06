@@ -25,7 +25,7 @@ public class CompanyProfile {
     private String description;
     private String location;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_account_id")
     @MapsId
     private UserWithRoles userId;

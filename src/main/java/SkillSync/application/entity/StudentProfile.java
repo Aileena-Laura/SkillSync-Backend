@@ -23,12 +23,12 @@ public class StudentProfile {
     private String lastName;
     private String description;
     private String location;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_account_id")
     @MapsId
     private UserWithRoles userId;
 
-    @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Skill> skills;
 
     public StudentProfile(UserWithRoles user, String firstName, String lastName){

@@ -1,5 +1,8 @@
 package SkillSync.security.service;
 
+import SkillSync.application.entity.Skill;
+import SkillSync.application.entity.SkillExperience;
+import SkillSync.application.entity.StudentProfile;
 import SkillSync.application.repository.CompanyProfileRepository;
 import SkillSync.application.repository.StudentProfileRepository;
 import SkillSync.security.TestUtils;
@@ -39,7 +42,7 @@ class UserWithRolesServiceTest {
       userWithRolesRepository.deleteAll();
       studentProfileRepository.deleteAll();
       companyProfileRepository.deleteAll();
-      TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository);
+      TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository, companyProfileRepository);
       dataInitialized = true;
     }
   }

@@ -43,4 +43,9 @@ public class CompanyService {
 
         return new CompanyResponse(companyProfileRepository.save(company));
     }
+
+    public void deleteCompanyAccount(String id){
+        CompanyProfile company = companyProfileRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
+        companyProfileRepository.delete(company);
+    }
 }
