@@ -21,6 +21,11 @@ public class SkillController {
         return skillService.addSkillToStudentProfile(skillRequest);
     }
 
+    @PostMapping("/project")
+    public SkillResponse addSkillToProject(@RequestBody SkillRequest skillRequest){
+        return skillService.addSkillToProject(skillRequest);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteSkill(@PathVariable int id){
         skillService.deleteSkillById(id);

@@ -22,7 +22,7 @@ public class Project {
     private String description;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Skill> requiredSkills;
+    private List<Skill> requiredSkills = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_id")
@@ -39,10 +39,13 @@ public class Project {
     }
 
     public void addRequiredSkill(Skill skill){
-        if(requiredSkills == null){
-            requiredSkills = new ArrayList<>();
-        }
         requiredSkills.add(skill);
+        skill.setProject(this);
+    }
+
+    public void removeRequiredSkill(Skill skill){
+        requiredSkills.remove(skill);
+        skill.setProject(null);
     }
 
 }

@@ -2,8 +2,11 @@ package SkillSync.application.service;
 
 import SkillSync.application.dto.ProjectRequest;
 import SkillSync.application.dto.ProjectResponse;
+import SkillSync.application.dto.SkillRequest;
 import SkillSync.application.entity.CompanyProfile;
 import SkillSync.application.entity.Project;
+import SkillSync.application.entity.Skill;
+import SkillSync.application.entity.SkillExperience;
 import SkillSync.application.repository.CompanyProfileRepository;
 import SkillSync.application.repository.ProjectRepository;
 import org.springframework.data.domain.Page;
@@ -46,6 +49,11 @@ public class ProjectService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No company with this id found"));
 
         Project newProject = new Project(body.getTitle(), body.getDescription(), company);
+
+        for (SkillRequest skillRequest : body.getRequiredSkills()){
+            Skill skill = new Skill(skillRequest.getSkillName());
+            newProject.addRequiredSkill(skill);
+        }
         return new ProjectResponse(projectRepository.save(newProject));
     }
 }

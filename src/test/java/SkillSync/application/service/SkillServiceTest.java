@@ -4,6 +4,7 @@ import SkillSync.application.dto.SkillRequest;
 import SkillSync.application.dto.SkillResponse;
 import SkillSync.application.entity.Skill;
 import SkillSync.application.repository.CompanyProfileRepository;
+import SkillSync.application.repository.ProjectRepository;
 import SkillSync.application.repository.SkillRepository;
 import SkillSync.application.repository.StudentProfileRepository;
 import SkillSync.security.TestUtils;
@@ -28,12 +29,14 @@ public class SkillServiceTest {
     UserWithRolesRepository userWithRolesRepository;
     @Autowired
     CompanyProfileRepository companyProfileRepository;
+    @Autowired
+    ProjectRepository projectRepository;
     SkillService service;
     private boolean dataInitialized = false;
 
     @BeforeEach
     void setup(){
-        service = new SkillService(studentRepository, skillRepository);
+        service = new SkillService(studentRepository, skillRepository, projectRepository);
         if(!dataInitialized) {
             userWithRolesRepository.deleteAll();
             studentRepository.deleteAll();

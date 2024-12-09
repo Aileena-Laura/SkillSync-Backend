@@ -33,9 +33,8 @@ public class Skill {
     @JoinColumn(name = "project_id")
     @JsonIgnore
     private Project project;
-    public Skill(String skillName, SkillExperience experience) {
+    public Skill(String skillName) {
         this.skillName = skillName;
-        this.experience = experience;
     }
 
     public void addStudent(StudentProfile student){
