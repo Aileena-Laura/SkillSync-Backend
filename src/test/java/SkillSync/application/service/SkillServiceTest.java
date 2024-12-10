@@ -50,7 +50,6 @@ public class SkillServiceTest {
     void addSkillSuccess(){
         SkillRequest body = SkillRequest.builder()
                 .skillName("Java")
-                .experience("MEDIUM")
                 .studentId(studentRepository.findAll().get(0).getStudentId())
                 .build();
         SkillResponse response = service.addSkillToStudentProfile(body);
@@ -61,7 +60,6 @@ public class SkillServiceTest {
     void testAddSkillStudentNotFountExeption(){
         SkillRequest body = SkillRequest.builder()
                 .skillName("Java")
-                .experience("MEDIUM")
                 .studentId("notValidId")
                 .build();
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> service.addSkillToStudentProfile(body));
@@ -73,7 +71,6 @@ public class SkillServiceTest {
         // Step 1: Create a Skill and add it to the student's profile
         SkillRequest addSkillRequest = SkillRequest.builder()
                 .skillName("Java")
-                .experience("MEDIUM")
                 .studentId(studentRepository.findAll().get(0).getStudentId()) // Use an existing student's ID
                 .build();
         // Add skill to student profile

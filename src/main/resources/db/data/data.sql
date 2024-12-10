@@ -1,4 +1,4 @@
-INSERT INTO skillapi (skill_name) VALUES
+INSERT INTO skill (skill_name) VALUES
                                       ('Java'),
                                       ('Python'),
                                       ('JavaScript'),

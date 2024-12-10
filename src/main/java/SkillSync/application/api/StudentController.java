@@ -1,5 +1,6 @@
 package SkillSync.application.api;
 
+import SkillSync.application.dto.SkillResponse;
 import SkillSync.application.dto.StudentRequest;
 import SkillSync.application.dto.StudentResponse;
 import SkillSync.application.service.StudentService;
@@ -22,6 +23,11 @@ public class StudentController {
         return studentService.getStudentProfile(username);
     }
 
+    @PatchMapping("{studentId}/skill/{skillId}")
+    public SkillResponse addSkillToStudentProfile(@PathVariable String studentId, @PathVariable int skillId){
+        return studentService.addSkillToStudentProfile(studentId, skillId);
+    }
+
     @PatchMapping("/description/{id}")
     public StudentResponse editStudentDescription(@PathVariable String id, @RequestBody StudentRequest body){
         return studentService.editStudentDescription(id, body);
@@ -36,6 +42,12 @@ public class StudentController {
     public ResponseEntity<String> deleteStudentAccount(@PathVariable String id){
         studentService.deleteStudentAccount(id);
         return ResponseEntity.status(HttpStatus.CREATED).body("{\"message\": \"Account deleted successfully\"}");
+    }
+
+    @DeleteMapping("{studentId}/skill/{skillId}")
+    public ResponseEntity<String> deleteSkillFromStudent(@PathVariable String studentId, @PathVariable int skillId){
+        studentService.removeSkillFromStudent(studentId, skillId);
+        return ResponseEntity.status(HttpStatus.CREATED).body("{\"message\": \"Skill deleted successfully\"}");
     }
 
 }
