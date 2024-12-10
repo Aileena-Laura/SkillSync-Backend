@@ -21,10 +21,15 @@ public class Project {
     private String title;
     private String description;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "project_skill",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
     private List<Skill> requiredSkills = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "company_id")
     private CompanyProfile companyProfile;
 
@@ -39,13 +44,11 @@ public class Project {
     }
 
     public void addRequiredSkill(Skill skill){
-        requiredSkills.add(skill);
-        skill.setProject(this);
+        this.requiredSkills.add(skill);
     }
 
     public void removeRequiredSkill(Skill skill){
         requiredSkills.remove(skill);
-        skill.setProject(null);
     }
 
 }

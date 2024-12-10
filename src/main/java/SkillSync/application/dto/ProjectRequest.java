@@ -14,5 +14,5 @@ public class ProjectRequest {
     private String title;
     private String description;
     private String companyId;
-    private List<SkillRequest> requiredSkills;
+    private List<Integer> requiredSkills;
 }

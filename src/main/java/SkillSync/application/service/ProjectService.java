@@ -9,6 +9,7 @@ import SkillSync.application.entity.Skill;
 import SkillSync.application.entity.SkillExperience;
 import SkillSync.application.repository.CompanyProfileRepository;
 import SkillSync.application.repository.ProjectRepository;
+import SkillSync.application.repository.SkillRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -22,10 +23,12 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final CompanyProfileRepository companyRepository;
+    private final SkillRepository skillRepository;
 
-    public ProjectService(ProjectRepository projectRepository, CompanyProfileRepository companyRepository) {
+    public ProjectService(ProjectRepository projectRepository, CompanyProfileRepository companyRepository, SkillRepository skillRepository) {
         this.projectRepository = projectRepository;
         this.companyRepository = companyRepository;
+        this.skillRepository = skillRepository;
     }
 
     public Page<ProjectResponse> getAllProjects(Pageable pageable){
@@ -44,16 +47,25 @@ public class ProjectService {
         return projects.stream().map(project -> new ProjectResponse(project)).toList();
     }
 
-    public ProjectResponse createProject(ProjectRequest body){
+    public ProjectResponse createProject(ProjectRequest body) {
+        // Find the company using the companyId from the request
         CompanyProfile company = companyRepository.findById(body.getCompanyId()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No company with this id found"));
 
+        // Create a new Project instance with the title, description, and company
         Project newProject = new Project(body.getTitle(), body.getDescription(), company);
 
-        for (SkillRequest skillRequest : body.getRequiredSkills()){
-            Skill skill = new Skill(skillRequest.getSkillName());
+        // Iterate through the list of required skill IDs
+        for (Integer skillId : body.getRequiredSkills()) {
+            // Retrieve the Skill entity using the skillId
+            Skill skill = skillRepository.findById(skillId).orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No skill found with this id"));
+
+            // Add the skill to the project's required skills list
             newProject.addRequiredSkill(skill);
         }
+
+        // Save the project and return a ProjectResponse
         return new ProjectResponse(projectRepository.save(newProject));
     }
 }
