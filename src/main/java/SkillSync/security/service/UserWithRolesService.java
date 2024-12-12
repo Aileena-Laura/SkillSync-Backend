@@ -1,6 +1,8 @@
 package SkillSync.security.service;
 
 import SkillSync.application.entity.CompanyProfile;
+import SkillSync.application.entity.Education;
+import SkillSync.application.entity.FieldOfStudy;
 import SkillSync.application.entity.StudentProfile;
 import SkillSync.application.repository.CompanyProfileRepository;
 import SkillSync.application.repository.StudentProfileRepository;
@@ -79,7 +81,18 @@ public class UserWithRolesService {
     userWithRoles.addRole(role);
 
     if (role == Role.STUDENT){
-      studentProfileRepository.save(new StudentProfile(userWithRoles, body.getFirstName(), body.getLastName()));
+      FieldOfStudy fieldOfStudy;
+      try {
+        fieldOfStudy = FieldOfStudy.valueOf(body.getFieldOfStudy().toUpperCase());
+      } catch (IllegalArgumentException e) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid field of study provided");
+      }
+
+      StudentProfile studentProfile = new StudentProfile(userWithRoles, body.getFirstName(), body.getLastName());
+      Education initialEducation = new Education(fieldOfStudy);
+      studentProfile.setCurrentEducation(initialEducation);
+
+      studentProfileRepository.save(studentProfile);
     }
     return new UserWithRolesResponse(userWithRolesRepository.save(userWithRoles));
   }

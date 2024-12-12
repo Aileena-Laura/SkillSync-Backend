@@ -1,5 +1,6 @@
 package SkillSync.application.dto;
 
+import SkillSync.application.entity.FieldOfStudy;
 import SkillSync.application.entity.Project;
 import lombok.*;
 
@@ -15,4 +16,5 @@ public class ProjectRequest {
     private String description;
     private String companyId;
     private List<Integer> requiredSkills;
+    private List<String> requiredFieldsOfStudy;
 }
