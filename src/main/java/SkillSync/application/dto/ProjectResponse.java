@@ -1,5 +1,6 @@
 package SkillSync.application.dto;
 
+import SkillSync.application.entity.FieldOfStudy;
 import SkillSync.application.entity.Project;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -19,6 +20,7 @@ public class ProjectResponse {
     private String description;
     private String companyId;
     private List<SkillResponse> requiredSkills;
+    private List<FieldOfStudy> requiredFieldsOfStudy;
 
 
     public ProjectResponse(Project project) {
@@ -27,5 +29,6 @@ public class ProjectResponse {
         this.description = project.getDescription();
         this.companyId = project.getCompanyProfile().getAccountId();
         this.requiredSkills = project.getRequiredSkills().stream().map(SkillResponse::new).toList();
+        this.requiredFieldsOfStudy = project.getRequiredFieldsOfStudy();
     }
 }

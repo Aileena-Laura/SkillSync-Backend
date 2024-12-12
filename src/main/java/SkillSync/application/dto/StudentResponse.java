@@ -1,5 +1,6 @@
 package SkillSync.application.dto;
 
+import SkillSync.application.entity.Education;
 import SkillSync.application.entity.Skill;
 import SkillSync.application.entity.StudentProfile;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class StudentResponse {
     String location;
     String role;
     List<SkillResponse> skills;
+    EducationResponse education;
 
 
     public StudentResponse(StudentProfile studentProfile){
@@ -29,5 +31,6 @@ public class StudentResponse {
         this.description = studentProfile.getDescription();
         this.location = studentProfile.getLocation();
         this.skills = studentProfile.getSkills().stream().map(SkillResponse::new).toList();
+        this.education = new EducationResponse(studentProfile.getCurrentEducation());
     }
 }

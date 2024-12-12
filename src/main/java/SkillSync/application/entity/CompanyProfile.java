@@ -31,7 +31,7 @@ public class CompanyProfile {
     private UserWithRoles userId;
 
     @OneToMany(mappedBy = "companyProfile", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Project> projects;
+    private List<Project> projects = new ArrayList<>();
 
     public CompanyProfile(UserWithRoles user, String companyName, String website, String location){
         this.userId = user;
@@ -41,9 +41,10 @@ public class CompanyProfile {
     }
 
     public void addProject(Project project){
-        if(projects == null){
-            projects = new ArrayList<>();
-        }
-        projects.add(project);
+        this.projects.add(project);
+    }
+
+    public void removeProject(Project project) {
+        this.projects.remove(project);
     }
 }

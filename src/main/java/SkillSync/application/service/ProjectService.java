@@ -3,10 +3,7 @@ package SkillSync.application.service;
 import SkillSync.application.dto.ProjectRequest;
 import SkillSync.application.dto.ProjectResponse;
 import SkillSync.application.dto.SkillRequest;
-import SkillSync.application.entity.CompanyProfile;
-import SkillSync.application.entity.Project;
-import SkillSync.application.entity.Skill;
-import SkillSync.application.entity.SkillExperience;
+import SkillSync.application.entity.*;
 import SkillSync.application.repository.CompanyProfileRepository;
 import SkillSync.application.repository.ProjectRepository;
 import SkillSync.application.repository.SkillRepository;
@@ -17,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -60,12 +58,36 @@ public class ProjectService {
             // Retrieve the Skill entity using the skillId
             Skill skill = skillRepository.findById(skillId).orElseThrow(
                     () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No skill found with this id"));
-
             // Add the skill to the project's required skills list
             newProject.addRequiredSkill(skill);
         }
 
+        List<FieldOfStudy> requiredFieldsOfStudy = body.getRequiredFieldsOfStudy().stream()
+                .map(field -> {
+                    try {
+                        return FieldOfStudy.valueOf(field);
+                    } catch (IllegalArgumentException ex) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid field of study: " + field);
+                    }
+                })
+                .collect(Collectors.toList());
+
+        newProject.getRequiredFieldsOfStudy().addAll(requiredFieldsOfStudy);
+
         // Save the project and return a ProjectResponse
         return new ProjectResponse(projectRepository.save(newProject));
+    }
+
+    public void deleteProject(int id) {
+        Project project = projectRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No project with this id found"));
+
+        // Remove the project from the CompanyProfile before deletion
+        if (project.getCompanyProfile() != null) {
+            project.getCompanyProfile().removeProject(project); // Remove the project from the company's project list
+        }
+
+        // Now, delete the project from the repository
+        projectRepository.delete(project);
     }
 }

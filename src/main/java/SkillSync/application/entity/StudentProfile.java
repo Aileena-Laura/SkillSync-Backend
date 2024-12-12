@@ -36,6 +36,10 @@ public class StudentProfile {
     )
     private List<Skill> skills = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "current_education_id", referencedColumnName = "id")
+    private Education currentEducation;
+
     public StudentProfile(UserWithRoles user, String firstName, String lastName){
         this.userId = user;
         this.firstName = firstName;

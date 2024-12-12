@@ -77,6 +77,9 @@ public class SecurityConfig {
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.DELETE, "/api/student/{id}")).hasAuthority("STUDENT")
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.DELETE, "/api/company/{id}")).hasAuthority("COMPANY")
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/skill")).hasAnyAuthority("COMPANY", "STUDENT")
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/fields-of-study")).permitAll()
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.DELETE, "/api/project/{id}")).hasAuthority("COMPANY")
+
 
 
             //This is for demo purposes only, and should be removed for a real system

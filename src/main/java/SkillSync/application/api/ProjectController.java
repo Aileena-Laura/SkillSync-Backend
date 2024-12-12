@@ -5,6 +5,8 @@ import SkillSync.application.dto.ProjectResponse;
 import SkillSync.application.service.ProjectService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,5 +38,11 @@ public class ProjectController {
     @PostMapping
     public ProjectResponse createProject(@RequestBody ProjectRequest body) {
         return projectService.createProject(body);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteProject(@PathVariable int id){
+        projectService.deleteProject(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body("{\"message\": \"Project deleted successfully\"}");
     }
 }
