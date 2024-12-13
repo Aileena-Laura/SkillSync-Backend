@@ -14,35 +14,47 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Project {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int projectId;
-    private String title;
-    private String description;
+    public class Project {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private int projectId;
+        private String title;
+        private String description;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Skill> requiredSkills;
+        @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+        @JoinTable(
+                name = "project_skill",
+                joinColumns = @JoinColumn(name = "project_id"),
+                inverseJoinColumns = @JoinColumn(name = "skill_id")
+        )
+        private List<Skill> requiredSkills = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "company_id")
-    private CompanyProfile companyProfile;
+        @ElementCollection(targetClass = FieldOfStudy.class)
+        @Enumerated(EnumType.STRING)
+        @CollectionTable(name = "project_field_of_study", joinColumns = @JoinColumn(name = "project_id"))
+        @Column(name = "field_of_study")
+        private List<FieldOfStudy> requiredFieldsOfStudy = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    private ProjectStatus status;
+        @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+        @JoinColumn(name = "company_id")
+        private CompanyProfile companyProfile;
 
-    public Project(String title, String description, CompanyProfile companyProfile) {
-        this.title = title;
-        this.description = description;
-        this.companyProfile = companyProfile;
-        companyProfile.addProject(this);
-    }
+        @Enumerated(EnumType.STRING)
+        private ProjectStatus status;
 
-    public void addRequiredSkill(Skill skill){
-        if(requiredSkills == null){
-            requiredSkills = new ArrayList<>();
+        public Project(String title, String description, CompanyProfile companyProfile) {
+            this.title = title;
+            this.description = description;
+            this.companyProfile = companyProfile;
+            companyProfile.addProject(this);
         }
-        requiredSkills.add(skill);
-    }
 
-}
+        public void addRequiredSkill(Skill skill){
+            this.requiredSkills.add(skill);
+        }
+
+        public void removeRequiredSkill(Skill skill){
+            requiredSkills.remove(skill);
+        }
+
+    }

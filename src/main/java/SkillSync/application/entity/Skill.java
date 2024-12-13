@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,31 +21,9 @@ public class Skill {
 
     private String skillName;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name="experience", columnDefinition = "ENUM('LOW','MEDIUM','HIGH')")
-    private SkillExperience experience;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id")
-    @JsonIgnore
-    private StudentProfile studentProfile;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id")
-    @JsonIgnore
-    private Project project;
-    public Skill(String skillName, SkillExperience experience) {
+    /*@ManyToMany(mappedBy = "requiredSkills")
+    private List<Project> projects = new ArrayList<>();*/
+    public Skill(String skillName) {
         this.skillName = skillName;
-        this.experience = experience;
-    }
-
-    public void addStudent(StudentProfile student){
-        this.studentProfile = student;
-        student.addSkill(this);
-    }
-
-    public void addProject(Project project){
-        this.project = project;
-        project.addRequiredSkill(this);
     }
 }

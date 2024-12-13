@@ -18,4 +18,5 @@ public class StudentSecurityRequest {
     String role;
     String firstName;
     String lastName;
+    String fieldOfStudy;
 }

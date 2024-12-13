@@ -17,14 +17,19 @@ import java.util.List;
 public class Education {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int educationId;
+    private int id;
 
-    private String degree;  // Degree type (e.g., Bachelor's, Master's, PhD)
-    private String fieldOfStudy;  // Field of study (e.g., Computer Science, Marketing)
+    @Enumerated(EnumType.STRING)
+    private EducationLevel educationLevel;
+
+    @Enumerated(EnumType.STRING)
+    private FieldOfStudy fieldOfStudy;
+
+    private String institutionName;
+    private int graduationYear;
 
 
-    public Education(String degree, String fieldOfStudy) {
-        this.degree = degree;
+    public Education(FieldOfStudy fieldOfStudy) {
         this.fieldOfStudy = fieldOfStudy;
     }
 }

@@ -4,6 +4,8 @@ import SkillSync.application.entity.CompanyProfile;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class CompanyResponse {
@@ -14,6 +16,7 @@ public class CompanyResponse {
     String location;
     String description;
     String website;
+    List<ProjectResponse> projects;
 
     public CompanyResponse(CompanyProfile companyProfile){
         this.username = companyProfile.getAccountId();
@@ -23,5 +26,6 @@ public class CompanyResponse {
         this.location = companyProfile.getLocation();
         this.website = companyProfile.getWebsite();
         this.description = companyProfile.getDescription();
+        this.projects = companyProfile.getProjects().stream().map(ProjectResponse::new).toList();
     }
 }

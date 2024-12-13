@@ -28,8 +28,17 @@ public class StudentProfile {
     @MapsId
     private UserWithRoles userId;
 
-    @OneToMany(mappedBy = "studentProfile", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "student_skill",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
     private List<Skill> skills = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "current_education_id", referencedColumnName = "id")
+    private Education currentEducation;
 
     public StudentProfile(UserWithRoles user, String firstName, String lastName){
         this.userId = user;
@@ -38,12 +47,10 @@ public class StudentProfile {
     }
 
     public void addSkill(Skill skill){
-        skills.add(skill);
-        skill.setStudentProfile(this);
+        this.skills.add(skill);
     }
 
     public void removeSkill(Skill skill) {
-        skills.remove(skill);
-        skill.setStudentProfile(null);
+        this.skills.remove(skill);
     }
 }

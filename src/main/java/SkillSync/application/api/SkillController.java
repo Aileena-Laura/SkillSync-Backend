@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/skill")
 public class SkillController {
@@ -16,9 +18,20 @@ public class SkillController {
         this.skillService = skillService;
     }
 
+
+    @GetMapping
+    public List<SkillResponse> getSkills(){
+        return skillService.getAllSkills();
+    }
+
     @PostMapping
     public SkillResponse addSkillToStudent(@RequestBody SkillRequest skillRequest) {
         return skillService.addSkillToStudentProfile(skillRequest);
+    }
+
+    @PostMapping("/project")
+    public SkillResponse addSkillToProject(@RequestBody SkillRequest skillRequest){
+        return skillService.addSkillToProject(skillRequest);
     }
 
     @DeleteMapping("/{id}")
