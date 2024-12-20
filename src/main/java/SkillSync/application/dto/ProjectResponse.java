@@ -21,6 +21,7 @@ public class ProjectResponse {
     private String companyId;
     private List<SkillResponse> requiredSkills;
     private List<FieldOfStudy> requiredFieldsOfStudy;
+    private double match;
 
 
     public ProjectResponse(Project project) {
@@ -30,5 +31,15 @@ public class ProjectResponse {
         this.companyId = project.getCompanyProfile().getAccountId();
         this.requiredSkills = project.getRequiredSkills().stream().map(SkillResponse::new).toList();
         this.requiredFieldsOfStudy = project.getRequiredFieldsOfStudy();
+    }
+
+    public ProjectResponse(Project project, double matchPersentage) {
+        this.id = project.getProjectId();
+        this.title = project.getTitle();
+        this.description = project.getDescription();
+        this.companyId = project.getCompanyProfile().getAccountId();
+        this.requiredSkills = project.getRequiredSkills().stream().map(SkillResponse::new).toList();
+        this.requiredFieldsOfStudy = project.getRequiredFieldsOfStudy();
+        this.match = matchPersentage;
     }
 }

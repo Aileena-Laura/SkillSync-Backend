@@ -18,7 +18,7 @@ import java.util.List;
 public class CompanyProfile {
     @Id
     @Column(name = "company_id")
-    private String accountId;
+    private String companyId;
 
     private String companyName;
     private String website;

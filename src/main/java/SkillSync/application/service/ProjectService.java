@@ -7,6 +7,7 @@ import SkillSync.application.entity.*;
 import SkillSync.application.repository.CompanyProfileRepository;
 import SkillSync.application.repository.ProjectRepository;
 import SkillSync.application.repository.SkillRepository;
+import SkillSync.application.repository.StudentProfileRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -22,11 +23,36 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final CompanyProfileRepository companyRepository;
     private final SkillRepository skillRepository;
+    private final StudentProfileRepository studentRepository;
 
-    public ProjectService(ProjectRepository projectRepository, CompanyProfileRepository companyRepository, SkillRepository skillRepository) {
+    public ProjectService(ProjectRepository projectRepository, CompanyProfileRepository companyRepository, SkillRepository skillRepository, StudentProfileRepository studentRepository) {
         this.projectRepository = projectRepository;
         this.companyRepository = companyRepository;
         this.skillRepository = skillRepository;
+        this.studentRepository = studentRepository;
+    }
+
+    public List<ProjectResponse> getAllProjectsByMatch(Pageable pageable, String studentId) {
+        // Fetch the student profile
+        StudentProfile student = studentRepository.findById(studentId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No student with this ID found"));
+
+        // Fetch all projects
+        List<Project> projects = projectRepository.findAll();
+
+        // Calculate match percentages and sort the projects
+        List<ProjectResponse> sortedProjectResponses = projects.stream()
+                .map(project -> {
+                    double matchPercentage = calculateMatchPercentage(student, project);
+                    return new ProjectResponse(project, matchPercentage);
+                })
+                .sorted((response1, response2) -> Double.compare(response2.getMatch(), response1.getMatch()))
+                .toList();
+
+        // Apply pagination manually
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), sortedProjectResponses.size());
+        return sortedProjectResponses.subList(start, end);
     }
 
     public Page<ProjectResponse> getAllProjects(Pageable pageable){
@@ -89,5 +115,43 @@ public class ProjectService {
 
         // Now, delete the project from the repository
         projectRepository.delete(project);
+    }
+
+    public double calculateMatchPercentage(StudentProfile student, Project project) {
+        // Extract student skills and field of study
+        List<Skill> studentSkills = student.getSkills();
+        FieldOfStudy studentFieldOfStudy = student.getCurrentEducation().getFieldOfStudy(); // Single field of study
+
+        // Extract project requirements
+        List<Skill> projectRequiredSkills = project.getRequiredSkills();
+        List<FieldOfStudy> projectRequiredFields = project.getRequiredFieldsOfStudy();
+
+        // Calculate the match score
+        int matchScore = 0;
+
+        // Skill match: Count how many required skills the student has
+        if (!projectRequiredSkills.isEmpty()) {
+            for (Skill requiredSkill : projectRequiredSkills) {
+                if (studentSkills.contains(requiredSkill)) {
+                    matchScore++;
+                }
+            }
+        }
+
+        // Field of study match: Check if the student's field of study matches any required field
+        if (projectRequiredFields.contains(studentFieldOfStudy)) {
+            matchScore++;
+        }
+
+        // Total possible match points
+        int totalPossiblePoints = projectRequiredSkills.size() + 1;
+
+        // Calculate match percentage
+        double matchPercentage = 0;
+        if (totalPossiblePoints > 0) {
+            matchPercentage = ((double) matchScore / totalPossiblePoints) * 100;
+        }
+
+        return matchPercentage;  // Return the match percentage
     }
 }

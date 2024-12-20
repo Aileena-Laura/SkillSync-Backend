@@ -25,6 +25,13 @@ public class ProjectController {
         return projectService.getAllProjects(pageable);
     }
 
+    @GetMapping("/match")
+    public List<ProjectResponse> getProjectsByMatch(
+            @RequestParam String studentId,
+            Pageable pageable) {
+        return projectService.getAllProjectsByMatch(pageable, studentId);
+    }
+
     @GetMapping("/{id}")
     public ProjectResponse getProjectById(@PathVariable int id){
         return projectService.getProjectById(id);
