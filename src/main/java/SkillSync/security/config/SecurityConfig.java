@@ -63,10 +63,11 @@ public class SecurityConfig {
     
     http.authorizeHttpRequests((authorize) -> authorize
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/auth/login")).permitAll()
-            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/user-with-role")).permitAll() //Clients can create a user for themself
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/user-with-role")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/user-with-role/company")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/user-with-role/student")).permitAll()
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/student")).hasAuthority("STUDENT")
+            .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/company/info/{username}")).hasAuthority("STUDENT")
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/skill")).hasAuthority("STUDENT")
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/company")).hasAuthority("COMPANY")
             .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.DELETE, "/api/skill/{id}")).hasAuthority("STUDENT")

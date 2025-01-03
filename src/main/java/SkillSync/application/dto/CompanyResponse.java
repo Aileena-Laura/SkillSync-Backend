@@ -18,11 +18,13 @@ public class CompanyResponse {
     String website;
     List<ProjectResponse> projects;
 
-    public CompanyResponse(CompanyProfile companyProfile){
-        this.username = companyProfile.getAccountId();
+    public CompanyResponse(CompanyProfile companyProfile, boolean includeAll){
+        if(includeAll){
+            this.username = companyProfile.getAccountId();
+            this.role = companyProfile.getUserId().getRole().toString();
+        }
         this.email = companyProfile.getUserId().getEmail();
         this.companyName = companyProfile.getCompanyName();
-        this.role = companyProfile.getUserId().getRole().toString();
         this.location = companyProfile.getLocation();
         this.website = companyProfile.getWebsite();
         this.description = companyProfile.getDescription();
