@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/project")
@@ -26,10 +27,11 @@ public class ProjectController {
     }
 
     @GetMapping("/match")
-    public List<ProjectResponse> getProjectsByMatch(
+    public ResponseEntity<Map<String, Object>> getProjectsByMatch(
             @RequestParam String studentId,
             Pageable pageable) {
-        return projectService.getAllProjectsByMatch(pageable, studentId);
+        Map<String, Object> response = projectService.getAllProjectsByMatch(pageable, studentId);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")

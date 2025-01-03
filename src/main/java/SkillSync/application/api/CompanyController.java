@@ -19,7 +19,12 @@ public class CompanyController {
 
     @GetMapping("/{username}")
     public CompanyResponse getCompanyProfileByUsername(@PathVariable String username){
-        return companyService.getCompanyProfile(username);
+        return companyService.getCompanyProfile(username, true);
+    }
+
+    @GetMapping("/info/{username}")
+    public CompanyResponse getCompanyProfileInfoByUsername(@PathVariable String username){
+        return companyService.getCompanyProfile(username, false);
     }
 
     @PatchMapping("/description/{id}")

@@ -14,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +34,7 @@ public class ProjectService {
         this.studentRepository = studentRepository;
     }
 
-    public List<ProjectResponse> getAllProjectsByMatch(Pageable pageable, String studentId) {
+    public Map<String, Object> getAllProjectsByMatch(Pageable pageable, String studentId) {
         // Fetch the student profile
         StudentProfile student = studentRepository.findById(studentId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No student with this ID found"));
@@ -43,8 +45,14 @@ public class ProjectService {
         // Calculate match percentages and sort the projects
         List<ProjectResponse> sortedProjectResponses = projects.stream()
                 .map(project -> {
+                    // Fetch the company name based on companyId (assuming CompanyRepository exists)
+                    String companyName = getCompanyNameById(project.getCompanyProfile().getAccountId());
+
+                    // Calculate match percentage
                     double matchPercentage = calculateMatchPercentage(student, project);
-                    return new ProjectResponse(project, matchPercentage);
+
+                    // Return ProjectResponse with project, match percentage, and company name
+                    return new ProjectResponse(project, matchPercentage, companyName);
                 })
                 .sorted((response1, response2) -> Double.compare(response2.getMatch(), response1.getMatch()))
                 .toList();
@@ -52,7 +60,27 @@ public class ProjectService {
         // Apply pagination manually
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), sortedProjectResponses.size());
-        return sortedProjectResponses.subList(start, end);
+        List<ProjectResponse> paginatedProjects = sortedProjectResponses.subList(start, end);
+
+        // Pagination metadata
+        int totalProjects = sortedProjectResponses.size();
+        int totalPages = (int) Math.ceil((double) totalProjects / pageable.getPageSize());
+
+        // Prepare the response map
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", paginatedProjects);
+        response.put("totalPages", totalPages);
+        response.put("currentPage", pageable.getPageNumber());
+        response.put("pageSize", pageable.getPageSize());
+        response.put("totalElements", totalProjects);
+
+        return response;
+    }
+
+    private String getCompanyNameById(String companyId) {
+        CompanyProfile company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found"));
+        return company.getCompanyName();
     }
 
     public Page<ProjectResponse> getAllProjects(Pageable pageable){

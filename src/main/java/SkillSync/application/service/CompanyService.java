@@ -20,9 +20,9 @@ public class CompanyService {
         this.companyProfileRepository = companyProfileRepository;
     }
 
-    public CompanyResponse getCompanyProfile(String id){
+    public CompanyResponse getCompanyProfile(String id, boolean includeAll){
         CompanyProfile company = companyProfileRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Company not found"));
-        return new CompanyResponse(company);
+        return new CompanyResponse(company, includeAll);
     }
 
     public CompanyResponse editCompanyDescription(String id, CompanyRequest body){
@@ -30,7 +30,7 @@ public class CompanyService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No company with this id found"));
 
         company.setDescription(body.getDescription());
-        return new CompanyResponse(companyProfileRepository.save(company));
+        return new CompanyResponse(companyProfileRepository.save(company), true);
     }
 
     public CompanyResponse editCompanyBasicInfo(String id, CompanyRequest body){
@@ -41,7 +41,7 @@ public class CompanyService {
         company.setWebsite(body.getWebsite());
         company.getUserId().setEmail(body.getEmail());
 
-        return new CompanyResponse(companyProfileRepository.save(company));
+        return new CompanyResponse(companyProfileRepository.save(company), true);
     }
 
     public void deleteCompanyAccount(String id){

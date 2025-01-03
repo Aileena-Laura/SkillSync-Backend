@@ -19,6 +19,7 @@ public class ProjectResponse {
     private String title;
     private String description;
     private String companyId;
+    private String companyName;
     private List<SkillResponse> requiredSkills;
     private List<FieldOfStudy> requiredFieldsOfStudy;
     private double match;
@@ -33,7 +34,7 @@ public class ProjectResponse {
         this.requiredFieldsOfStudy = project.getRequiredFieldsOfStudy();
     }
 
-    public ProjectResponse(Project project, double matchPersentage) {
+    public ProjectResponse(Project project, double matchPersentage, String companyName) {
         this.id = project.getProjectId();
         this.title = project.getTitle();
         this.description = project.getDescription();
@@ -41,5 +42,6 @@ public class ProjectResponse {
         this.requiredSkills = project.getRequiredSkills().stream().map(SkillResponse::new).toList();
         this.requiredFieldsOfStudy = project.getRequiredFieldsOfStudy();
         this.match = matchPersentage;
+        this.companyName = companyName;
     }
 }
