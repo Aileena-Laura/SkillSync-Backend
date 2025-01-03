@@ -2,6 +2,7 @@ package SkillSync.application.api;
 
 import SkillSync.application.dto.ProjectRequest;
 import SkillSync.application.dto.ProjectResponse;
+import SkillSync.application.entity.Project;
 import SkillSync.application.service.ProjectService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,18 @@ public class ProjectController {
             Pageable pageable) {
         Map<String, Object> response = projectService.getAllProjectsByMatch(pageable, studentId);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> searchProjects(
+            @RequestParam(required = false) String term,
+            @RequestParam String userId,
+            Pageable pageable) {
+
+        // Call the service to search projects with the given parameters
+        Map<String, Object> searchResults = projectService.searchProjects(term, userId, pageable);
+
+        return ResponseEntity.ok(searchResults);
     }
 
     @GetMapping("/{id}")
