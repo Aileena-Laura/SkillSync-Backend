@@ -41,15 +41,15 @@ public class CompanyProfileServiceTest {
     @Test
     void deleteCompanyDeletesUserWithRole(){
         assertEquals(2, studentRepository.count());
-        assertEquals(1, companyProfileRepository.count());
-        assertEquals(4, userWithRolesRepository.count());
+        assertEquals(2, companyProfileRepository.count());
+        assertEquals(5, userWithRolesRepository.count());
 
         String usernameToDelete = "company4";
         service.deleteCompanyAccount(usernameToDelete);
 
         assertFalse(userWithRolesRepository.findById(usernameToDelete).isPresent());
-        assertEquals(0, companyProfileRepository.count());
-        assertEquals(3, userWithRolesRepository.count());
+        assertEquals(1, companyProfileRepository.count());
+        assertEquals(4, userWithRolesRepository.count());
 
     }
 }
