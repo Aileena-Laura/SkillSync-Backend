@@ -22,6 +22,7 @@ public class CompanyProfile {
 
     private String companyName;
     private String website;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String location;
 

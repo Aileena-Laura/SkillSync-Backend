@@ -17,6 +17,7 @@ import java.util.List;
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private int projectId;
         private String title;
+        @Column(columnDefinition = "TEXT")
         private String description;
 
         @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})

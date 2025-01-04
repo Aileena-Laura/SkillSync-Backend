@@ -21,6 +21,7 @@ public class StudentProfile {
 
     private String firstName;
     private String lastName;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String location;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
