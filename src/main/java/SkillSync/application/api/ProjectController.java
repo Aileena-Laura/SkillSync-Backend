@@ -41,7 +41,6 @@ public class ProjectController {
             @RequestParam String userId,
             Pageable pageable) {
 
-        // Call the service to search projects with the given parameters
         Map<String, Object> searchResults = projectService.searchProjects(term, userId, pageable);
 
         return ResponseEntity.ok(searchResults);

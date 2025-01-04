@@ -57,7 +57,7 @@ public class ProjectService {
         int end = Math.min(start + pageable.getPageSize(), projectResponses.size());
         List<ProjectResponse> paginatedProjects = projectResponses.subList(start, end);
 
-        // Prepare response with pagination metadata
+        // Prepare response with pagination data
         Map<String, Object> response = new HashMap<>();
         response.put("content", paginatedProjects);
         response.put("totalPages", (int) Math.ceil((double) projectResponses.size() / pageable.getPageSize()));
@@ -68,40 +68,15 @@ public class ProjectService {
         return response;
     }
 
-
-    /*public Map<String, Object> searchProjects(String term, Pageable pageable) {
-        // Fetch the projects based on the search criteria
-
-        Page<Project> projects = projectRepository.findProjectsBySearchTerm(term, pageable);
-        for (Project p : projects
-             ) {
-            System.out.println(p.getTitle());
-        }
-
-        // Map the results to ProjectResponse objects
-        Page<ProjectResponse> projectResponses = projects.map(project -> new ProjectResponse(project));
-
-        // Prepare the response map
-        Map<String, Object> response = new HashMap<>();
-        response.put("content", projectResponses.getContent());
-        response.put("totalPages", projectResponses.getTotalPages());
-        response.put("currentPage", projectResponses.getNumber());
-        response.put("pageSize", projectResponses.getSize());
-        response.put("totalElements", projectResponses.getTotalElements());
-
-        return response;
-    }*/
-
-
     public Map<String, Object> getAllProjectsByMatch(Pageable pageable, String studentId) {
         // Fetch the student profile
         StudentProfile student = studentRepository.findById(studentId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No student with this ID found"));
 
-        // Step 1: Filter projects by field of study
+        // Filter projects by field of study first
         List<Project> filteredProjects = projectRepository.findProjectsByFieldOfStudySorted(student.getCurrentEducation().getFieldOfStudy(), pageable);
 
-        // Step 2: Calculate match percentages for the fetched projects
+        // Calculate match percentages for the projects
         List<ProjectResponse> projectResponses = filteredProjects.stream()
                 .map(project -> {
                     double matchPercentage = calculateMatchPercentage(student, project);
@@ -110,19 +85,19 @@ public class ProjectService {
                 })
                 .collect(Collectors.toList());  // Collect to list first (no sorting yet)
 
-        // Step 3: Apply pagination manually
+        //Apply pagination manually
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), projectResponses.size());
         List<ProjectResponse> paginatedProjects = projectResponses.subList(start, end);
 
-        // Step 4: Sort the paginated projects by match percentage
+        //Sort the paginated projects by match percentage
         paginatedProjects.sort((response1, response2) -> Double.compare(response2.getMatch(), response1.getMatch()));
 
-        // Pagination metadata
+        // Pagination data
         int totalProjects = projectResponses.size();
         int totalPages = (int) Math.ceil((double) totalProjects / pageable.getPageSize());
 
-        // Step 5: Prepare the response map
+        //Prepare the response
         Map<String, Object> response = new HashMap<>();
         response.put("content", paginatedProjects);
         response.put("totalPages", totalPages);
@@ -132,49 +107,6 @@ public class ProjectService {
 
         return response;
     }
-
-    /*public Map<String, Object> getAllProjectsByMatch(Pageable pageable, String studentId) {
-        // Fetch the student profile
-        StudentProfile student = studentRepository.findById(studentId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No student with this ID found"));
-
-        // Fetch all projects
-        List<Project> projects = projectRepository.findAll();
-
-        // Calculate match percentages and sort the projects
-        List<ProjectResponse> sortedProjectResponses = projects.stream()
-                .map(project -> {
-                    // Fetch the company name based on companyId (assuming CompanyRepository exists)
-                    String companyName = getCompanyNameById(project.getCompanyProfile().getAccountId());
-
-                    // Calculate match percentage
-                    double matchPercentage = calculateMatchPercentage(student, project);
-
-                    // Return ProjectResponse with project, match percentage, and company name
-                    return new ProjectResponse(project, matchPercentage, companyName);
-                })
-                .sorted((response1, response2) -> Double.compare(response2.getMatch(), response1.getMatch()))
-                .toList();
-
-        // Apply pagination manually
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), sortedProjectResponses.size());
-        List<ProjectResponse> paginatedProjects = sortedProjectResponses.subList(start, end);
-
-        // Pagination metadata
-        int totalProjects = sortedProjectResponses.size();
-        int totalPages = (int) Math.ceil((double) totalProjects / pageable.getPageSize());
-
-        // Prepare the response map
-        Map<String, Object> response = new HashMap<>();
-        response.put("content", paginatedProjects);
-        response.put("totalPages", totalPages);
-        response.put("currentPage", pageable.getPageNumber());
-        response.put("pageSize", pageable.getPageSize());
-        response.put("totalElements", totalProjects);
-
-        return response;
-    }*/
 
     private String getCompanyNameById(String companyId) {
         CompanyProfile company = companyRepository.findById(companyId)
@@ -240,7 +172,7 @@ public class ProjectService {
             project.getCompanyProfile().removeProject(project); // Remove the project from the company's project list
         }
 
-        // Now, delete the project from the repository
+        // delete the project from the repository
         projectRepository.delete(project);
     }
 
@@ -270,7 +202,7 @@ public class ProjectService {
             matchScore++;
         }
 
-        // Total possible match points
+        // Total possible match points (+ 1 for field of study)
         int totalPossiblePoints = projectRequiredSkills.size() + 1;
 
         // Calculate match percentage
@@ -279,6 +211,6 @@ public class ProjectService {
             matchPercentage = ((double) matchScore / totalPossiblePoints) * 100;
         }
 
-        return matchPercentage;  // Return the match percentage
+        return matchPercentage;
     }
 }

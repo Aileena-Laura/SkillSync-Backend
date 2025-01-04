@@ -20,9 +20,6 @@ public class Skill {
     private int skillId;
 
     private String skillName;
-
-    /*@ManyToMany(mappedBy = "requiredSkills")
-    private List<Project> projects = new ArrayList<>();*/
     public Skill(String skillName) {
         this.skillName = skillName;
     }
