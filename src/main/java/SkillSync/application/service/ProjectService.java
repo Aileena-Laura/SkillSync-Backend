@@ -74,7 +74,7 @@ public class ProjectService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No student with this ID found"));
 
         // Filter projects by field of study first
-        List<Project> filteredProjects = projectRepository.findProjectsByFieldOfStudySorted(student.getCurrentEducation().getFieldOfStudy(), pageable);
+        List<Project> filteredProjects = projectRepository.findProjectsByFieldOfStudySorted(student.getCurrentEducation().getFieldOfStudy());
 
         // Calculate match percentages for the projects
         List<ProjectResponse> projectResponses = filteredProjects.stream()
@@ -83,7 +83,7 @@ public class ProjectService {
                     String companyName = getCompanyNameById(project.getCompanyProfile().getAccountId());
                     return new ProjectResponse(project, matchPercentage, companyName);
                 })
-                .collect(Collectors.toList());  // Collect to list first (no sorting yet)
+                .collect(Collectors.toList());
 
         //Apply pagination manually
         int start = (int) pageable.getOffset();
@@ -94,7 +94,7 @@ public class ProjectService {
         paginatedProjects.sort((response1, response2) -> Double.compare(response2.getMatch(), response1.getMatch()));
 
         // Pagination data
-        int totalProjects = projectResponses.size();
+        int totalProjects = (int) projectRepository.count();
         int totalPages = (int) Math.ceil((double) totalProjects / pageable.getPageSize());
 
         //Prepare the response

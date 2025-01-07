@@ -16,7 +16,7 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     @Query("SELECT p FROM Project p " +
             "ORDER BY CASE WHEN :studentFieldOfStudy IN (SELECT f FROM p.requiredFieldsOfStudy f) THEN 1 ELSE 0 END DESC")
-    List<Project> findProjectsByFieldOfStudySorted(@Param("studentFieldOfStudy") FieldOfStudy studentFieldOfStudy, Pageable pageable);
+    List<Project> findProjectsByFieldOfStudySorted(@Param("studentFieldOfStudy") FieldOfStudy studentFieldOfStudy);
     ;
 
     @Query("SELECT p FROM Project p " +
