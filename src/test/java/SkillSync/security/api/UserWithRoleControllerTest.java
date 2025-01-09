@@ -83,7 +83,7 @@ class UserWithRoleControllerTest {
   @Test
   void addUsersWithRolesNoRolesShouldFail() throws Exception {
     // Arrange: Create a request without roles
-    StudentSecurityRequest studentRequest = new StudentSecurityRequest("u100", "secret", "u100@a.dk", null, "Laura", "Ramgil", FieldOfStudy.BUSINESS.toString());
+    StudentSecurityRequest studentRequest = new StudentSecurityRequest("u100", "secret12", "u100@a.dk", null, "Laura", "Ramgil", FieldOfStudy.BUSINESS.toString());
 
     // Act & Assert: Perform the request and expect failure due to validation
     mockMvc.perform(post("/api/user-with-role/student")
@@ -94,7 +94,7 @@ class UserWithRoleControllerTest {
 
   @Test
   void addUserWithRolesStudent() throws Exception {
-    StudentSecurityRequest newStudentReq = new StudentSecurityRequest("u100", "secret", "u100@a.dk", "STUDENT", "Laura", "Ramgil", FieldOfStudy.COMPUTER_SCIENCE.toString());
+    StudentSecurityRequest newStudentReq = new StudentSecurityRequest("u100", "secret12", "u100@a.dk", "STUDENT", "Laura", "Ramgil", FieldOfStudy.COMPUTER_SCIENCE.toString());
     mockMvc.perform(post("/api/user-with-role/student")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(newStudentReq)))
@@ -106,7 +106,7 @@ class UserWithRoleControllerTest {
 
   @Test
   void addUserWithRolesCompany() throws Exception {
-    CompanySecurityRequest newCompanyReq = new CompanySecurityRequest("u100", "secret", "u100@a.dk", "COMPANY", "Tesla", "Tesla.com", "Ringsted");
+    CompanySecurityRequest newCompanyReq = new CompanySecurityRequest("u100", "secret12", "u100@a.dk", "COMPANY", "Tesla", "Tesla.com", "Ringsted");
     mockMvc.perform(post("/api/user-with-role/company")
                     .contentType("application/json")
                     .content(objectMapper.writeValueAsString(newCompanyReq)))

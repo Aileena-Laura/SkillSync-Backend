@@ -63,7 +63,7 @@ class UserWithRolesServiceTest {
   @Test
   void editUserWithRoles() {
     String originalPassword = userWithRolesRepository.findById("student1").get().getPassword();
-    UserWithRolesRequest user1 = new UserWithRolesRequest("u1New", "new_Password", "newMail@a.dk", "COMPANY");
+    UserWithRolesRequest user1 = new UserWithRolesRequest("u1New", "new_Password1", "newMail@a.dk", "COMPANY");
     UserWithRolesResponse user = userWithRolesService.editUserWithRoles("student1",user1);
     assertEquals("student1", user.getUserName());  //IMPORTANT: The username should not be changed
     assertEquals("newMail@a.dk", user.getEmail());
@@ -73,7 +73,7 @@ class UserWithRolesServiceTest {
 
   @Test
   void addUserWithRolesWithRole() {
-    UserWithRolesRequest user = new UserWithRolesRequest("u5", "new_Password", "xx@x.dk", "STUDENT");
+    UserWithRolesRequest user = new UserWithRolesRequest("u5", "new_Password1", "xx@x.dk", "STUDENT");
     UserWithRolesResponse newUser = userWithRolesService.addUserWithRoles(user, Role.STUDENT);
     assertTrue(newUser.getRole().contains("STUDENT"));
     assertEquals("u5", newUser.getUserName());
