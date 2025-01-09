@@ -1,10 +1,11 @@
 package SkillSync.security.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import SkillSync.application.entity.FieldOfStudy;
+import SkillSync.application.repository.CompanyProfileRepository;
+import SkillSync.application.repository.StudentProfileRepository;
 import SkillSync.security.TestUtils;
-import SkillSync.security.dto.LoginRequest;
-import SkillSync.security.dto.LoginResponse;
-import SkillSync.security.dto.UserWithRolesRequest;
+import SkillSync.security.dto.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import SkillSync.security.repository.UserWithRolesRepository;
 import SkillSync.security.service.UserWithRolesService;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -43,22 +43,28 @@ class UserWithRoleControllerTest {
   @Autowired
   UserWithRolesService userWithRolesService;
   @Autowired
+  StudentProfileRepository studentProfileRepository;
+  @Autowired
+  CompanyProfileRepository companyProfileRepository;
+  @Autowired
   PasswordEncoder passwordEncoder;
 
-  String adminToken;
-  String userToken;
+  String companyToken;
+  String studentToken;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   private boolean dataInitialized = false;
 
   @BeforeEach
   void setUp() throws Exception {
-    userWithRolesService = new UserWithRolesService(userWithRolesRepository);
+    userWithRolesService = new UserWithRolesService(userWithRolesRepository, studentProfileRepository, companyProfileRepository);
     if (!dataInitialized) {
       userWithRolesRepository.deleteAll();
-      TestUtils.setupTestUsers(userWithRolesRepository);
-      userToken = loginAndGetToken("u2", "secret");
-      adminToken = loginAndGetToken("u3", "secret");
+      studentProfileRepository.deleteAll();
+      companyProfileRepository.deleteAll();
+      TestUtils.setupTestUsers(userWithRolesRepository, studentProfileRepository, companyProfileRepository);
+      companyToken = loginAndGetToken("student1", "secret");
+      studentToken = loginAndGetToken("student2", "secret");
       dataInitialized = true;
     }
   }
@@ -75,73 +81,38 @@ class UserWithRoleControllerTest {
   }
 
   @Test
-  void addUsersWithRolesNoRoles() throws Exception {
-    UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk");
-    UserWithRoleController.DEFAULT_ROLE_TO_ASSIGN = null;
-    mockMvc.perform(post("/api/user-with-role")
+  void addUsersWithRolesNoRolesShouldFail() throws Exception {
+    // Arrange: Create a request without roles
+    StudentSecurityRequest studentRequest = new StudentSecurityRequest("u100", "secret12", "u100@a.dk", null, "Laura", "Ramgil", FieldOfStudy.BUSINESS.toString());
+
+    // Act & Assert: Perform the request and expect failure due to validation
+    mockMvc.perform(post("/api/user-with-role/student")
                     .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(newUserReq)))
+                    .content(objectMapper.writeValueAsString(studentRequest)))
+            .andExpect(status().isBadRequest()); // Expecting 400 Bad Request
+  }
+
+  @Test
+  void addUserWithRolesStudent() throws Exception {
+    StudentSecurityRequest newStudentReq = new StudentSecurityRequest("u100", "secret12", "u100@a.dk", "STUDENT", "Laura", "Ramgil", FieldOfStudy.COMPUTER_SCIENCE.toString());
+    mockMvc.perform(post("/api/user-with-role/student")
+                    .contentType("application/json")
+                    .content(objectMapper.writeValueAsString(newStudentReq)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.userName").value("u100"))
             .andExpect(jsonPath("$.email").value("u100@a.dk"))
-            .andExpect(jsonPath("$.roleNames").isEmpty());
+            .andExpect(jsonPath("$.role").value("STUDENT"));
   }
 
   @Test
-  void addUsersWithRoles() throws Exception {
-    UserWithRolesRequest newUserReq = new UserWithRolesRequest("u100", "secret", "u100@a.dk");
-    //UserWithRoleController.DEFAULT_ROLE_TO_ASSIGN = null;
-    mockMvc.perform(post("/api/user-with-role")
+  void addUserWithRolesCompany() throws Exception {
+    CompanySecurityRequest newCompanyReq = new CompanySecurityRequest("u100", "secret12", "u100@a.dk", "COMPANY", "Tesla", "Tesla.com", "Ringsted");
+    mockMvc.perform(post("/api/user-with-role/company")
                     .contentType("application/json")
-                    .content(objectMapper.writeValueAsString(newUserReq)))
+                    .content(objectMapper.writeValueAsString(newCompanyReq)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.userName").value("u100"))
             .andExpect(jsonPath("$.email").value("u100@a.dk"))
-            .andExpect(jsonPath("$.roleNames", hasSize(1)))
-            .andExpect(jsonPath("$.roleNames", contains("USER")));
-  }
-
-  @Test
-  void addRoleFAilsWhenNotAuthenticatedWithRole() throws Exception {
-    mockMvc.perform(patch("/api/user-with-role/add-role/u4/admin")
-                    .accept("application/json"))
-            .andExpect(status().isUnauthorized());
-  }
-
-  @Test
-  void addRole() throws Exception {
-    mockMvc.perform(patch("/api/user-with-role/add-role/u4/admin")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
-                    .accept("application/json"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.userName").value("u4"))
-            .andExpect(jsonPath("$.roleNames", hasSize(1)))
-            .andExpect(jsonPath("$.roleNames", contains("ADMIN")));
-  }
-
-  @Test
-  void addRoleFailsWithWrongRole() throws Exception {
-    mockMvc.perform(patch("/api/user-with-role/add-role/u2/admin")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + userToken)
-                    .accept("application/json"))
-            .andExpect(status().isForbidden());
-  }
-
-  @Test
-  void removeRoleFailsWhenNotAuthenticatedWithRole() throws Exception {
-    mockMvc.perform(patch("/api/user-with-role/remove-role/u2/user")
-                    .accept("application/json"))
-            .andExpect(status().isUnauthorized());
-  }
-
-  @Test
-  void removeRole() throws Exception {
-    mockMvc.perform(patch("/api/user-with-role/remove-role/u1/user")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
-                    .accept("application/json"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.userName").value("u1"))
-            .andExpect(jsonPath("$.roleNames", hasSize(1)))
-            .andExpect(jsonPath("$.roleNames", contains("ADMIN")));
+            .andExpect(jsonPath("$.role").value("COMPANY"));
   }
 }

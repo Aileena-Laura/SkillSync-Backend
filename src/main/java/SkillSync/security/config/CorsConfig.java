@@ -14,7 +14,8 @@ public class CorsConfig {
     private static final String[] ALLOWED_ORIGINS = new String[] {
             "https://skillsync.lauraramgil.dk",
             "https://nice-flower-0c7b2a903.5.azurestaticapps.net",
-            "http://127.0.0.1:8088"
+            "http://127.0.0.1:8088",
+            "http://127.0.0.1:5503"
     };
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
